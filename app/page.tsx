@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import {
   ArrowRight,
   Users,
@@ -16,22 +16,14 @@ import {
   Building2,
   Rocket,
   Network,
-  Menu,
-  X,
   ChevronLeft,
   ChevronRight,
-  Linkedin,
-  Twitter,
-  Instagram,
-  Facebook,
-  MessageCircle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function HomePage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const services = [
@@ -76,38 +68,36 @@ export default function HomePage() {
   const partners = [
     {
       name: "Aamukh Capital",
-      logo: encodeURI(
-        "/images/partners/Portfolio Logo - Aamukh Capital.png",
-      ),
+      logo: encodeURI("/images/partners/Portfolio Logo - Aamukh Capital.png"),
     },
     {
       name: "All Terra",
       logo: encodeURI("/images/partners/Portfolio Logo - All Terra.png"),
     },
-    {
-      name: "AmeenJi",
-      logo: encodeURI("/images/partners/Portfolio Logo - AmeenJi.png"),
-    },
-    {
-      name: "Anawil",
-      logo: encodeURI("/images/partners/Portfolio Logo - Anawil.png"),
-    },
+    // {
+    //   name: "AmeenJi",
+    //   logo: encodeURI("/images/partners/Portfolio Logo - AmeenJi.png"),
+    // },
+    // {
+    //   name: "Anawil",
+    //   logo: encodeURI("/images/partners/Portfolio Logo - Anawil.png"),
+    // },
     {
       name: "Append",
       logo: encodeURI("/images/partners/Portfolio Logo - Append.png"),
     },
-    {
-      name: "ATM",
-      logo: encodeURI("/images/partners/Portfolio Logo - ATM.png"),
-    },
+    // {
+    //   name: "ATM",
+    //   logo: encodeURI("/images/partners/Portfolio Logo - ATM.png"),
+    // },
     {
       name: "Bajaj VC",
       logo: encodeURI("/images/partners/Portfolio Logo - Bajaj VC.png"),
     },
-    {
-      name: "ClassView",
-      logo: encodeURI("/images/partners/Portfolio Logo - ClassView.png"),
-    },
+    // {
+    //   name: "ClassView",
+    //   logo: encodeURI("/images/partners/Portfolio Logo - ClassView.png"),
+    // },
     {
       name: "Decipher Investment",
       logo: encodeURI(
@@ -116,14 +106,12 @@ export default function HomePage() {
     },
     {
       name: "EagleEyeView",
-      logo: encodeURI(
-        "/images/partners/Portfolio Logo - EagleEyeView.png",
-      ),
+      logo: encodeURI("/images/partners/Portfolio Logo - EagleEyeView.png"),
     },
-    {
-      name: "Ecoline",
-      logo: encodeURI("/images/partners/Portfolio Logo - Ecoline.png"),
-    },
+    // {
+    //   name: "Ecoline",
+    //   logo: encodeURI("/images/partners/Portfolio Logo - Ecoline.png"),
+    // },
     {
       name: "EUVA",
       logo: encodeURI("/images/partners/Portfolio Logo - EUVA.png"),
@@ -150,12 +138,12 @@ export default function HomePage() {
         "/images/partners/Portfolio Logo - Green Guard Enviro.png",
       ),
     },
-    {
-      name: "Hem Securities",
-      logo: encodeURI(
-        "/images/partners/Portfolio Logo - Hem Securities.png",
-      ),
-    },
+    // {
+    //   name: "Hem Securities",
+    //   logo: encodeURI(
+    //     "/images/partners/Portfolio Logo - Hem Securities.png",
+    //   ),
+    // },
     {
       name: "Innovartan",
       logo: encodeURI("/images/partners/Portfolio Logo - Innovartan.png"),
@@ -166,9 +154,7 @@ export default function HomePage() {
     },
     {
       name: "Project Zenith",
-      logo: encodeURI(
-        "/images/partners/Portfolio Logo - Project Zenith.png",
-      ),
+      logo: encodeURI("/images/partners/Portfolio Logo - Project Zenith.png"),
     },
     {
       name: "Rasta",
@@ -184,9 +170,7 @@ export default function HomePage() {
     },
     {
       name: "StudentTenant",
-      logo: encodeURI(
-        "/images/partners/Portfolio Logo - StudentTenant.png",
-      ),
+      logo: encodeURI("/images/partners/Portfolio Logo - StudentTenant.png"),
     },
     {
       name: "TPL",
@@ -204,10 +188,10 @@ export default function HomePage() {
       name: "Yugartha",
       logo: encodeURI("/images/partners/Portfolio Logo - Yugartha.png"),
     },
-    {
-      name: "Zelio",
-      logo: encodeURI("/images/partners/Portfolio Logo - Zelio.png"),
-    },
+    // {
+    //   name: "Zelio",
+    //   logo: encodeURI("/images/partners/Portfolio Logo - Zelio.png"),
+    // },
   ];
 
   const servicesPerSlide = 3;
@@ -231,7 +215,6 @@ export default function HomePage() {
   return (
     <>
       {/* Header */}
-
 
       {/* Hero Section */}
       <section className="py-20 bg-gradient-primary-light overflow-hidden">
@@ -258,7 +241,7 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link href='/services'>
+            <Link href="/services">
               <Button
                 size="lg"
                 variant="outline"
@@ -366,7 +349,7 @@ export default function HomePage() {
             ].map((item, index) => (
               <Card
                 key={index}
-                className={`text-center border-primary-blue-light hover:shadow-lg transition-all duration-300 hover:-translate-y-2 animate-in fade-in-50 slide-in-from-bottom-6 duration-700 ${item.delay}`}
+                className={`text-center border-primary-blue-light hover:shadow-lg transition-all duration-300 hover:-translate-y-2 animate-in fade-in-50 slide-in-from-bottom-6 ${item.delay}`}
               >
                 <CardHeader>
                   <div className="w-16 h-16 bg-primary-blue-light rounded-full flex items-center justify-center mx-auto mb-4 transition-transform hover:scale-110">
@@ -459,10 +442,11 @@ export default function HomePage() {
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${index === currentSlide
-                    ? "bg-primary-blue"
-                    : "bg-muted-foreground/30"
-                    }`}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    index === currentSlide
+                      ? "bg-primary-blue"
+                      : "bg-muted-foreground/30"
+                  }`}
                 />
               ))}
             </div>
@@ -527,7 +511,7 @@ export default function HomePage() {
             ].map((post, index) => (
               <Card
                 key={index}
-                className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in-50 slide-in-from-bottom-6 duration-700 delay-${index * 150}`}
+                className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in-50 slide-in-from-bottom-6 delay-${index * 150}`}
               >
                 <div className="relative overflow-hidden rounded-t-lg">
                   <Image
@@ -697,8 +681,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-
     </>
   );
 }
