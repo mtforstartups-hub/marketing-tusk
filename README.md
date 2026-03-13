@@ -1,30 +1,32 @@
-# Marketing website design (2)
+# Marketing Tusk
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+Marketing Tusk helps early-stage startups, SMEs, enablers, and investors across India grow smarter and faster with strategic marketing and ecosystem enablement services.
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/pritam-dharas-projects/v0-marketing-website-design-2)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/a0dCb0QirmD)
 
-## Overview
+## Our Mission
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+**Maximize the Impact of your Venture**
+
+We bridge the gap between founders, investors, and enablers by offering curated marketing services, program visibility, and community access.
+
+## Our Values
+
+### For Startups
+End-to-end support in branding, pitch decks, investor outreach, and accelerator applications so you can focus on building your product.
+
+### For Enablers
+Increase program visibility, attract quality applicants, and enhance your ecosystem presence with our targeted marketing strategies.
+
+### For Investors
+Better pipeline visibility and access to vetted startups through our extensive network and ecosystem connections.
+
+## About This Project
+
+This is the official marketing website for Marketing Tusk, built with Next.js and modern web technologies. The site showcases our services and connects our community of founders, enablers, and investors.
 
 ## Deployment
 
 Your project is live at:
 
-**[https://vercel.com/pritam-dharas-projects/v0-marketing-website-design-2](https://vercel.com/pritam-dharas-projects/v0-marketing-website-design-2)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.app/chat/a0dCb0QirmD](https://v0.app/chat/a0dCb0QirmD)**
-
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+**[www.marketingtusk.com](https://www.marketingtusk.com)**
