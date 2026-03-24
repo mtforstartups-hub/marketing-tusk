@@ -1,13 +1,17 @@
-// Querying with "sanityFetch" will keep content automatically updated
-// Before using it, import and render "<SanityLive />" in your layout, see
-// https://github.com/sanity-io/next-sanity#live-content-api for more information.
-import { defineLive } from "next-sanity/live";
 import { client } from './client'
+import { draftMode } from 'next/headers'
 
-const token = process.env.SANITY_API_READ_TOKEN;
+export async function sanityFetch({ query, params = {} }: { query: string, params?: any }) {
+  const isDraftMode = (await draftMode()).isEnabled
 
-export const { sanityFetch, SanityLive } = defineLive({
-  client,
-  serverToken: token,
-  browserToken: token,
-});
+  const data = await client.fetch(query, params, {
+    token: isDraftMode ? process.env.SANITY_API_READ_TOKEN : undefined,
+    perspective: isDraftMode ? 'previewDrafts' : 'published',
+    useCdn: !isDraftMode,
+    stega: isDraftMode,
+  })
+  
+  return { data }
+}
+
+export const SanityLive = () => null 
