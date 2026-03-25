@@ -41,7 +41,6 @@ export default function ServicesPage() {
         "Investor-focused content",
         "Multiple revisions included",
       ],
-      price: "",
       duration: "5-7 days",
       category: "Design",
     },
@@ -50,7 +49,6 @@ export default function ServicesPage() {
       title: "Website Development",
       description: "Modern, user-friendly designs that create captivating online presence",
       features: ["Responsive web design", "SEO optimization", "Content management system", "Mobile-first approach"],
-      price: "",
       duration: "2-3 weeks",
       category: "Development",
     },
@@ -64,7 +62,6 @@ export default function ServicesPage() {
         "Analytics & reporting",
         "Community engagement",
       ],
-      price: "",
       duration: "Ongoing",
       category: "Marketing",
     },
@@ -73,7 +70,6 @@ export default function ServicesPage() {
       title: "Branding Services",
       description: "Complete brand identity solutions that establish strong market presence",
       features: ["Logo & visual identity", "Brand guidelines", "Marketing collaterals", "Brand strategy consultation"],
-      price: "",
       duration: "1-2 weeks",
       category: "Design",
     },
@@ -82,7 +78,6 @@ export default function ServicesPage() {
       title: "Investor Outreach",
       description: "Strategic connections with the right investors for your startup journey",
       features: ["Investor database access", "Personalized outreach", "Meeting coordination", "Follow-up management"],
-      price: "",
       duration: "4-6 weeks",
       category: "Networking",
     },
@@ -91,7 +86,6 @@ export default function ServicesPage() {
       title: "Ecosystem Enablement",
       description: "Access to accelerators, mentors, and industry experts across India",
       features: ["Accelerator applications", "Mentor connections", "Industry introductions", "Program recommendations"],
-      price: "",
       duration: "3-4 weeks",
       category: "Networking",
     },
@@ -202,17 +196,17 @@ export default function ServicesPage() {
                   </div>
 
                   <div className="border-t pt-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                   {/*} <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
                         <Target className="h-4 w-4 text-primary-blue" />
                         <span className="text-sm font-medium text-foreground">Price</span>
                       </div>
                       <span className="text-sm font-semibold text-primary-blue">{service.price}</span>
-                    </div>
+                    </div>*/}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4 text-primary-blue" />
-                        <span className="text-sm font-medium text-foreground">Timeline</span>
+                        <span className="text-sm m-3 font-medium text-foreground">Timeline</span>
                       </div>
                       <span className="text-sm text-muted-foreground">{service.duration}</span>
                     </div>
@@ -235,7 +229,7 @@ export default function ServicesPage() {
       <section className="py-20 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Our Proven Process</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">Process</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               A systematic approach that ensures quality delivery and measurable results
             </p>
