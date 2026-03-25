@@ -86,9 +86,6 @@ export default function Footer() {
                                 About Us
                             </li>
                             <li className="hover:text-white transition-colors cursor-pointer">
-                                Our Network
-                            </li>
-                            <li className="hover:text-white transition-colors cursor-pointer">
                                 Case Studies
                             </li>
                             <li className="hover:text-white transition-colors cursor-pointer">

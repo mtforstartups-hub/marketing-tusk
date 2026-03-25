@@ -429,18 +429,16 @@ export default function HomePage() {
             </div>
 
             {/* Navigation Buttons */}
-            <button
-              onClick={prevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors"
-            >
-              <ChevronLeft className="h-6 w-6 text-primary-blue" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors"
-            >
-              <ChevronRight className="h-6 w-6 text-primary-blue" />
-            </button>
+           <button
+          onClick={prevSlide}
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors">
+         <ChevronLeft className="h-6 w-6 text-primary-blue" />
+        </button>
+         <button
+         onClick={nextSlide}
+           className="absolute right-2 top-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors">
+           <ChevronRight className="h-6 w-6 text-primary-blue" />
+          </button>
 
             {/* Dots Indicator */}
             <div className="flex justify-center mt-8 space-x-2">
