@@ -194,7 +194,7 @@ export default function HomePage() {
     // },
   ];
 
-  const servicesPerSlide = 3;
+  const [servicesPerSlide, setServicesPerSlide] = useState(3);
   const totalSlides = Math.ceil(services.length / servicesPerSlide);
 
   useEffect(() => {
@@ -211,6 +211,22 @@ export default function HomePage() {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
+  useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth < 768) {
+      setServicesPerSlide(1); // mobile
+    } else if (window.innerWidth < 1024) {
+      setServicesPerSlide(2); // tablet
+    } else {
+      setServicesPerSlide(3); // desktop
+    }
+  };
+
+  handleResize(); // initial run
+  window.addEventListener("resize", handleResize);
+
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
   return (
     <>
@@ -372,7 +388,15 @@ export default function HomePage() {
               >
                 {Array.from({ length: totalSlides }).map((_, slideIndex) => (
                   <div key={slideIndex} className="w-full flex-shrink-0">
-                    <div className="grid md:grid-cols-3 gap-6 px-4">
+                    <div
+  className={`grid gap-6 px-4 ${
+    servicesPerSlide === 1
+      ? "grid-cols-1"
+      : servicesPerSlide === 2
+      ? "md:grid-cols-2"
+      : "lg:grid-cols-3"
+  }`}
+>
                       {services
                         .slice(
                           slideIndex * servicesPerSlide,
