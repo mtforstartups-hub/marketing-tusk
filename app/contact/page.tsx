@@ -460,25 +460,6 @@ export default function ContactPage() {
                   </CardContent>
                 </Card>
               </div>
-
-              {/* Why Choose Us */}
-              <div className="bg-gradient-primary-light p-6 rounded-lg">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Why Choose Marketing Tusk?</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <Users className="h-5 w-5 text-primary-blue" />
-                    <span className="text-muted-foreground">500+ Startups Supported</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Building2 className="h-5 w-5 text-primary-blue" />
-                    <span className="text-muted-foreground">Pan-India Network</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <TrendingUp className="h-5 w-5 text-primary-blue" />
-                    <span className="text-muted-foreground">95% Success Rate</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

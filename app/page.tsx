@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import FAQSection from "@/components/ui/faqsection";
 import { Badge } from "@/components/ui/badge";
 
 import {
@@ -25,7 +26,6 @@ import Image from "next/image";
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
-
   const services = [
     {
       icon: PresentationChart,
@@ -194,7 +194,7 @@ export default function HomePage() {
     // },
   ];
 
-  const servicesPerSlide = 3;
+  const [servicesPerSlide, setServicesPerSlide] = useState(3);
   const totalSlides = Math.ceil(services.length / servicesPerSlide);
 
   useEffect(() => {
@@ -211,6 +211,22 @@ export default function HomePage() {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
+  useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth < 768) {
+      setServicesPerSlide(1); // mobile
+    } else if (window.innerWidth < 1024) {
+      setServicesPerSlide(2); // tablet
+    } else {
+      setServicesPerSlide(3); // desktop
+    }
+  };
+
+  handleResize(); // initial run
+  window.addEventListener("resize", handleResize);
+
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
   return (
     <>
@@ -241,15 +257,6 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link href="/services">
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 py-3 border-primary-blue-light hover:bg-primary-blue-light bg-transparent transform hover:scale-105 transition-all"
-              >
-                View Our Services
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
@@ -257,16 +264,6 @@ export default function HomePage() {
       {/* Partners Logo Slider */}
       <section className="py-16 bg-background border-b overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl font-bold text-foreground mb-2">
-              Trusted by startups and backed by leading ecosystem partners
-            </h3>
-            <p className="text-muted-foreground">
-              Join hundreds of successful startups who have grown with our
-              support
-            </p>
-          </div>
-
           {/* Infinite Logo Slider */}
           <div className="relative">
             <div className="flex animate-scroll space-x-16 items-center">
@@ -308,6 +305,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
 
       {/* About Section */}
       <section id="about" className="py-20">
@@ -390,7 +388,15 @@ export default function HomePage() {
               >
                 {Array.from({ length: totalSlides }).map((_, slideIndex) => (
                   <div key={slideIndex} className="w-full flex-shrink-0">
-                    <div className="grid md:grid-cols-3 gap-6 px-4">
+                    <div
+  className={`grid gap-6 px-4 ${
+    servicesPerSlide === 1
+      ? "grid-cols-1"
+      : servicesPerSlide === 2
+      ? "md:grid-cols-2"
+      : "lg:grid-cols-3"
+  }`}
+>
                       {services
                         .slice(
                           slideIndex * servicesPerSlide,
@@ -423,18 +429,16 @@ export default function HomePage() {
             </div>
 
             {/* Navigation Buttons */}
-            <button
-              onClick={prevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors"
-            >
-              <ChevronLeft className="h-6 w-6 text-primary-blue" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors"
-            >
-              <ChevronRight className="h-6 w-6 text-primary-blue" />
-            </button>
+           <button
+          onClick={prevSlide}
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors">
+         <ChevronLeft className="h-6 w-6 text-primary-blue" />
+        </button>
+         <button
+         onClick={nextSlide}
+           className="absolute right-2 top-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors">
+           <ChevronRight className="h-6 w-6 text-primary-blue" />
+          </button>
 
             {/* Dots Indicator */}
             <div className="flex justify-center mt-8 space-x-2">
@@ -621,6 +625,8 @@ export default function HomePage() {
         </div>
       </section>
 
+   <FAQSection />
+
       {/* Call-to-Action Banner */}
       <section className="py-20 bg-gradient-primary text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
@@ -635,22 +641,6 @@ export default function HomePage() {
               growth with Marketing Tusk. From pitch decks to investor
               connections, we're here to help you succeed.
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-yellow-300 rounded-full"></div>
-                <span className="text-lg">Free Initial Consultation</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-yellow-300 rounded-full"></div>
-                <span className="text-lg">Proven Track Record</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-yellow-300 rounded-full"></div>
-                <span className="text-lg">Extensive Network Access</span>
-              </div>
-            </div>
-
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">
                 <Button
@@ -661,22 +651,6 @@ export default function HomePage() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="/services">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-primary-blue text-lg px-8 py-4 transform hover:scale-105 transition-all font-semibold bg-transparent"
-                >
-                  Explore Our Services
-                </Button>
-              </Link>
-            </div>
-
-            <div className="mt-12 text-sm opacity-75">
-              <p>
-                Trusted by 500+ startups • 95% client satisfaction rate • 24/7
-                support
-              </p>
             </div>
           </div>
         </div>
