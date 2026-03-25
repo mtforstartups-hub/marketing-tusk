@@ -41,7 +41,7 @@ export default function ServicesPage() {
         "Investor-focused content",
         "Multiple revisions included",
       ],
-      price: "Starting at ₹25,000",
+      price: "",
       duration: "5-7 days",
       category: "Design",
     },
@@ -50,7 +50,7 @@ export default function ServicesPage() {
       title: "Website Development",
       description: "Modern, user-friendly designs that create captivating online presence",
       features: ["Responsive web design", "SEO optimization", "Content management system", "Mobile-first approach"],
-      price: "Starting at ₹50,000",
+      price: "",
       duration: "2-3 weeks",
       category: "Development",
     },
@@ -64,7 +64,7 @@ export default function ServicesPage() {
         "Analytics & reporting",
         "Community engagement",
       ],
-      price: "Starting at ₹15,000/month",
+      price: "",
       duration: "Ongoing",
       category: "Marketing",
     },
@@ -73,7 +73,7 @@ export default function ServicesPage() {
       title: "Branding Services",
       description: "Complete brand identity solutions that establish strong market presence",
       features: ["Logo & visual identity", "Brand guidelines", "Marketing collaterals", "Brand strategy consultation"],
-      price: "Starting at ₹35,000",
+      price: "",
       duration: "1-2 weeks",
       category: "Design",
     },
@@ -82,7 +82,7 @@ export default function ServicesPage() {
       title: "Investor Outreach",
       description: "Strategic connections with the right investors for your startup journey",
       features: ["Investor database access", "Personalized outreach", "Meeting coordination", "Follow-up management"],
-      price: "Starting at ₹40,000",
+      price: "",
       duration: "4-6 weeks",
       category: "Networking",
     },
@@ -91,7 +91,7 @@ export default function ServicesPage() {
       title: "Ecosystem Enablement",
       description: "Access to accelerators, mentors, and industry experts across India",
       features: ["Accelerator applications", "Mentor connections", "Industry introductions", "Program recommendations"],
-      price: "Starting at ₹30,000",
+      price: "",
       duration: "3-4 weeks",
       category: "Networking",
     },
@@ -278,7 +278,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Testimonials Section 
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -323,8 +323,8 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-primary text-white">
+        {/* CTA Section */ }
+      < section className="py-20 bg-gradient-primary text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Accelerate Your Growth?</h2>
           <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
@@ -353,6 +353,6 @@ export default function ServicesPage() {
       </section>
 
 
-    </div>
+    </div >
   )
 }
