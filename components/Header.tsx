@@ -4,11 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 //import { ThemeToggle } from "./theme-toggle";
+import { ChevronDown } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -32,13 +35,60 @@ export default function Header() {
             Home
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
           </Link>
-          <Link
-            href="/services"
-            className="text-foreground hover:text-primary-blue transition-colors relative group"
-          >
-            Services
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
-          </Link>
+      <div
+  className="relative inline-block"
+  onMouseEnter={() => setServicesOpen(true)}
+  onMouseLeave={() => setServicesOpen(false)}
+>
+  {/* Services text + triangle */}
+  <div className="flex items-center gap-1">
+    <Link
+      href="/services"
+      className="text-foreground hover:text-primary-blue transition-colors relative"
+    >
+      Services
+      <span
+        className={`absolute -bottom-1 left-0 h-0.5 bg-primary-blue transition-all duration-300 ${
+          servicesOpen ? "w-full" : "w-0"
+        }`}
+      ></span>
+    </Link>
+
+    {/* Triangle for click toggle */}
+    <ChevronDown
+      onClick={() => setServicesOpen(!servicesOpen)}
+      className={`h-4 w-4 cursor-pointer transition-transform duration-300 ${
+        servicesOpen ? "rotate-180" : "rotate-0"
+      }`}
+    />
+  </div>
+
+  {/* Dropdown */}
+  <div
+    className={`absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md transition-all duration-300 z-50 ${
+      servicesOpen ? "opacity-100 visible" : "opacity-0 invisible"
+    }`}
+  >
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Pitch Deck design
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Website Development
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Social Media Marketing
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Branding service
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Investor Outreach
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Ecosystem Enablement
+    </a>
+  </div>
+</div>
           <Link
             href="/blog"
             className="text-foreground hover:text-primary-blue transition-colors relative group"
@@ -87,12 +137,43 @@ export default function Header() {
             >
               Home
             </Link>
-            <Link
-              href="/services"
-              className="text-foreground hover:text-primary-blue transition-colors"
-            >
-              Services
-            </Link>
+  {/* Services button + triangle */}
+<div className="relative w-full flex flex-col">
+  {/* Services link + arrow */}
+  <div className="flex items-center gap-1 w-full relative">
+    {/* Services page link */}
+    <Link
+      href="/services"
+      className="text-foreground hover:text-primary-blue py-2"
+    >
+      Services
+    </Link>
+
+    {/* Arrow button to toggle dropdown */}
+    <button
+      onClick={() => setServicesOpen(!servicesOpen)}
+      className="p-2 relative"
+    >
+      <ChevronDown
+        className={`h-4 w-4 transition-transform duration-300 ${
+          servicesOpen ? "rotate-180" : "rotate-0"
+        }`}
+      />
+    </button>
+
+    {/* Dropdown menu absolutely positioned below the arrow */}
+    {servicesOpen && (
+      <div className="absolute top-full left-20 w-56 bg-white rounded-md shadow-lg z-50 mt-1">
+        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Pitch Deck design</a>
+        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Website Development</a>
+        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Social Media Marketing</a>
+        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Branding service</a>
+        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Investor Outreach</a>
+        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Ecosystem Enablement</a>
+      </div>
+    )}
+  </div>
+</div>
             <Link
               href="/blog"
               className="text-foreground hover:text-primary-blue transition-colors"
