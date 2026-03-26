@@ -10,6 +10,7 @@ import { Menu, X } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -33,23 +34,47 @@ export default function Header() {
             Home
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
           </Link>
-        <div className="relative group inline-block">
-  <Link
-    href="/services"
+       <div
+  className="relative inline-block"
+  onMouseEnter={() => setServicesOpen(true)}
+  onMouseLeave={() => setServicesOpen(false)}
+>
+  <button
+    onClick={() => setServicesOpen(!servicesOpen)}
     className="text-foreground hover:text-primary-blue transition-colors relative"
   >
     Services
-    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all duration-300 group-hover:w-full"></span>
-  </Link>
+    <span
+      className={`absolute -bottom-1 left-0 h-0.5 bg-primary-blue transition-all duration-300 ${
+        servicesOpen ? "w-full" : "w-0"
+      }`}
+    ></span>
+  </button>
 
   {/* Dropdown */}
-  <div className="absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Pitch Deck design</a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Website Development</a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Social Media Marketing</a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Branding service</a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Investor Outreach</a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Ecosystem Enablement</a>
+  <div
+    className={`absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md transition-all duration-300 z-50 ${
+      servicesOpen ? "opacity-100 visible" : "opacity-0 invisible"
+    }`}
+  >
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Pitch Deck design
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Website Development
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Social Media Marketing
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Branding service
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Investor Outreach
+    </a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+      Ecosystem Enablement
+    </a>
   </div>
 </div>
           <Link
