@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 //import { ThemeToggle } from "./theme-toggle";
+import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -34,22 +35,33 @@ export default function Header() {
             Home
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
           </Link>
-       <div
+      <div
   className="relative inline-block"
   onMouseEnter={() => setServicesOpen(true)}
   onMouseLeave={() => setServicesOpen(false)}
 >
-  <button
-    onClick={() => setServicesOpen(!servicesOpen)}
-    className="text-foreground hover:text-primary-blue transition-colors relative"
-  >
-    Services
-    <span
-      className={`absolute -bottom-1 left-0 h-0.5 bg-primary-blue transition-all duration-300 ${
-        servicesOpen ? "w-full" : "w-0"
+  {/* Services text + triangle */}
+  <div className="flex items-center gap-1">
+    <Link
+      href="/services"
+      className="text-foreground hover:text-primary-blue transition-colors relative"
+    >
+      Services
+      <span
+        className={`absolute -bottom-1 left-0 h-0.5 bg-primary-blue transition-all duration-300 ${
+          servicesOpen ? "w-full" : "w-0"
+        }`}
+      ></span>
+    </Link>
+
+    {/* Triangle for click toggle */}
+    <ChevronDown
+      onClick={() => setServicesOpen(!servicesOpen)}
+      className={`h-4 w-4 cursor-pointer transition-transform duration-300 ${
+        servicesOpen ? "rotate-180" : "rotate-0"
       }`}
-    ></span>
-  </button>
+    />
+  </div>
 
   {/* Dropdown */}
   <div
