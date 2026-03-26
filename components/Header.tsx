@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ThemeToggle } from "./theme-toggle";
+//import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
@@ -55,10 +55,8 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Theme Toggle and Mobile Menu */}
+        {/* Theme Toggle and Mobile Menu*/} 
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
-
           {/* Mobile Menu Button */}
           <button
             className="md:hidden"

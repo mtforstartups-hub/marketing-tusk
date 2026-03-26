@@ -7,24 +7,24 @@ export default function FAQSection() {
 
   const faqs = [
     {
-      question: "What services does Marketing Tusk offer?",
+      question: " What makes your startup marketing agency different?",
       answer:
-        "We provide pitch deck design, website development, branding, social media marketing, and investor outreach services.",
+        "We focus specifically on startups and SMEs, offering growth-driven strategies, branding, and performance marketing under one roof.",
     },
     {
-      question: "How long does a project take?",
+      question: " Do you provide marketing strategy consulting services?",
       answer:
-        "Timelines depend on the service. Pitch decks take 5–7 days, while websites take 2–3 weeks.",
+        "Yes, we offer data-driven marketing strategy consulting to help businesses scale efficiently and improve ROI.",
     },
     {
-      question: "Do you work with early-stage startups?",
+      question: " How experienced is your team?",
       answer:
-        "Yes, we specialize in helping early-stage startups, SMEs, and ecosystem enablers grow faster.",
+        "Our team consists of experienced marketers, strategists, designers, and content experts who specialize in startup growth.",
     },
     {
-      question: "How can I get started?",
+      question: " Do you work with international clients?",
       answer:
-        "Simply click on 'Free Consultation' or contact us through the contact page.",
+        "Yes, we work with both Indian and global clients across multiple industries including SaaS, ecommerce, and B2B.",
     },
   ];
 
