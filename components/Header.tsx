@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 //import { ThemeToggle } from "./theme-toggle";
+
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
@@ -32,13 +33,25 @@ export default function Header() {
             Home
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
           </Link>
-          <Link
-            href="/services"
-            className="text-foreground hover:text-primary-blue transition-colors relative group"
-          >
-            Services
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
-          </Link>
+        <div className="relative group inline-block">
+  <Link
+    href="/services"
+    className="text-foreground hover:text-primary-blue transition-colors relative"
+  >
+    Services
+    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all duration-300 group-hover:w-full"></span>
+  </Link>
+
+  {/* Dropdown */}
+  <div className="absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Pitch Deck design</a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Website Development</a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Social Media Marketing</a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Branding service</a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Investor Outreach</a>
+    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Ecosystem Enablement</a>
+  </div>
+</div>
           <Link
             href="/blog"
             className="text-foreground hover:text-primary-blue transition-colors relative group"
