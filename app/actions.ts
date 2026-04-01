@@ -3,7 +3,8 @@
 import { generateAdminEmailHtml } from "@/lib/email-templates";
 import * as z from "zod";
 import { env } from "@/env";
-import { appendToGoogleSheet, transporter } from "@/lib/utils";
+import nodemailer from "nodemailer";
+import { google } from "googleapis";
 
 // 1. Define the base fields that apply to EVERY role
 const baseFields = {
@@ -53,6 +54,51 @@ export type ContactFormState = {
   errors?: Record<string, string[]>;
 };
 
+export async function appendToGoogleSheet(
+  data: z.infer<typeof contactFormSchema>,
+) {
+  const oauth2Client = new google.auth.OAuth2(env.CLIENT_ID, env.CLIENT_SECRET);
+
+  oauth2Client.setCredentials({
+    refresh_token: env.REFRESH_TOKEN,
+  });
+
+  const sheets = google.sheets({ version: "v4", auth: oauth2Client });
+
+  // Map ALL possible form fields to specific array indexes (columns)
+  const rowData = [
+    new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), // Better readable timestamp
+    data.name || "",
+    data.email || "",
+    data.phone || "",
+    data.company || "",
+    data.role || "",
+    data.message || "",
+    // Founder Fields
+    (data.role === "founder" ? data.fundingStage : "") || "",
+    (data.role === "founder" ? data.teamSize : "") || "",
+    (data.role === "founder" ? data.sector : "") || "",
+    // Investor Fields
+    (data.role === "investor" ? data.investmentRange : "") || "",
+    (data.role === "investor" ? data.investmentStage : "") || "",
+    (data.role === "investor" ? data.sectorsOfInterest : "") || "",
+    // Enabler Fields
+    (data.role === "enabler" ? data.organizationType : "") || "",
+    (data.role === "enabler" ? data.programType : "") || "",
+    (data.role === "enabler" ? data.supportServices : "") || "",
+  ];
+
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: env.SPREADSHEET_ID,
+    // Expanded range to cover A through P (16 columns)
+    range: "Sheet1!A:P",
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: [rowData],
+    },
+  });
+}
+
 export default async function submitContactForm(
   prevState: ContactFormState,
   formData: FormData,
@@ -81,6 +127,17 @@ export default async function submitContactForm(
       subject: `New Contact Submission from ${validatedFields.data.name}`,
       html: htmlContent,
     };
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: env.EMAIL_USER,
+        clientId: env.CLIENT_ID,
+        clientSecret: env.CLIENT_SECRET,
+        refreshToken: env.REFRESH_TOKEN,
+      },
+    });
 
     // Run both tasks in parallel
     const emailPromise = transporter.sendMail(mailOptions);
