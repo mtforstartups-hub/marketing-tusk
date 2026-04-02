@@ -14,12 +14,30 @@ import {
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import submitContactForm, { ContactFormState } from "@/app/actions";
+import { MultiSelect } from "./MultiSelect";
 
 const initialState: ContactFormState = {
   success: false,
   message: "",
   errors: {},
 };
+
+const FUNDING_STAGES = [
+  { value: "pre-seed", label: "Pre-Seed" },
+  { value: "seed", label: "Seed" },
+  { value: "series-a", label: "Series A" },
+  { value: "series-b", label: "Series B" },
+  { value: "series-c", label: "Series C+" },
+  { value: "bootstrapped", label: "Bootstrapped" },
+];
+
+const INVESTMENT_STAGES = [
+  { value: "pre-seed", label: "Pre-Seed" },
+  { value: "seed", label: "Seed" },
+  { value: "series-a", label: "Series A" },
+  { value: "series-b", label: "Series B" },
+  { value: "growth", label: "Growth Stage" },
+];
 
 export default function ContactForm() {
   const [selectedRole, setSelectedRole] = useState<string>("");
@@ -34,8 +52,10 @@ export default function ContactForm() {
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="fundingStage">Current Funding Stage *</Label>
-              <Select name="fundingStage">
+              <Label htmlFor="fundingStage">
+                Current Funding Stage (Choose Multiple) *
+              </Label>
+              {/* <Select name="fundingStage">
                 <SelectTrigger>
                   <SelectValue placeholder="Select funding stage" />
                 </SelectTrigger>
@@ -47,12 +67,13 @@ export default function ContactForm() {
                   <SelectItem value="series-c">Series C+</SelectItem>
                   <SelectItem value="bootstrapped">Bootstrapped</SelectItem>
                 </SelectContent>
-              </Select>
-              {state.errors?.fundingStage && (
-                <p className="text-sm text-red-500 mt-1">
-                  {state.errors.fundingStage[0]}
-                </p>
-              )}
+              </Select> */}
+              <MultiSelect
+                name="fundingStage"
+                options={FUNDING_STAGES}
+                placeholder="Select funding stage"
+                error={state.errors?.fundingStage?.[0]}
+              />
             </div>
             <div>
               <Label htmlFor="teamSize">Team Size *</Label>
@@ -110,10 +131,12 @@ export default function ContactForm() {
                   <SelectValue placeholder="Select investment range" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="under-1l">Under ₹1 Lakh</SelectItem>
-                  <SelectItem value="1l-5l">₹1-5 Lakhs</SelectItem>
-                  <SelectItem value="5l-25l">₹5-25 Lakhs</SelectItem>
-                  <SelectItem value="25l-1cr">₹25 Lakhs - ₹1 Crore</SelectItem>
+                  <SelectItem value="under-1lakh">Under ₹1 Lakh</SelectItem>
+                  <SelectItem value="1-5lakh">₹1-5 Lakhs</SelectItem>
+                  <SelectItem value="5-25lakh">₹5-25 Lakhs</SelectItem>
+                  <SelectItem value="25lakh-1cr">
+                    ₹25 Lakhs - ₹1 Crore
+                  </SelectItem>
                   <SelectItem value="1cr-5cr">₹1-5 Crores</SelectItem>
                   <SelectItem value="5cr+">₹5+ Crores</SelectItem>
                 </SelectContent>
@@ -128,7 +151,7 @@ export default function ContactForm() {
               <Label htmlFor="investmentStage">
                 Preferred Investment Stage *
               </Label>
-              <Select name="investmentStage">
+              {/* <Select name="investmentStage">
                 <SelectTrigger>
                   <SelectValue placeholder="Select investment stage" />
                 </SelectTrigger>
@@ -144,7 +167,13 @@ export default function ContactForm() {
                 <p className="text-sm text-red-500 mt-1">
                   {state.errors.investmentStage[0]}
                 </p>
-              )}
+              )} */}
+              <MultiSelect
+                name="investmentStage"
+                options={INVESTMENT_STAGES}
+                placeholder="Select investment stage"
+                error={state.errors?.investmentStage?.[0]}
+              />
             </div>
             <div>
               <Label htmlFor="sectorsOfInterest">Sectors of Interest *</Label>

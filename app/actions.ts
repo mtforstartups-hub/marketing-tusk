@@ -28,7 +28,9 @@ const contactFormSchema = z.discriminatedUnion("role", [
     role: z.literal("founder", {
       error: () => "Please select a valid role", // Zod 4 uses `error` instead of `errorMap`
     }),
-    fundingStage: z.string().min(1, "Please select a funding stage"),
+    fundingStage: z
+      .array(z.string())
+      .min(1, "Please select at least one funding stage"),
     teamSize: z.string().min(1, "Please select a team size"),
     sector: z.string().min(1, "Please select an industry/sector"),
   }),
@@ -36,7 +38,10 @@ const contactFormSchema = z.discriminatedUnion("role", [
     ...baseFields,
     role: z.literal("investor"),
     investmentRange: z.string().min(1, "Please select an investment range"),
-    investmentStage: z.string().min(1, "Please select an investment stage"),
+    // investmentStage: z.string().min(1, "Please select an investment stage"),
+    investmentStage: z
+      .array(z.string())
+      .min(1, "Please select at least one investment stage"),
     sectorsOfInterest: z.string().min(1, "Please specify sectors of interest"),
   }),
   z.object({
@@ -75,12 +80,12 @@ export async function appendToGoogleSheet(
     data.role || "",
     data.message || "",
     // Founder Fields
-    (data.role === "founder" ? data.fundingStage : "") || "",
+    data.role === "founder" ? data.fundingStage.join(", ") : "",
     (data.role === "founder" ? data.teamSize : "") || "",
     (data.role === "founder" ? data.sector : "") || "",
     // Investor Fields
     (data.role === "investor" ? data.investmentRange : "") || "",
-    (data.role === "investor" ? data.investmentStage : "") || "",
+    data.role === "investor" ? data.investmentStage.join(", ") : "",
     (data.role === "investor" ? data.sectorsOfInterest : "") || "",
     // Enabler Fields
     (data.role === "enabler" ? data.organizationType : "") || "",
@@ -103,7 +108,11 @@ export default async function submitContactForm(
   prevState: ContactFormState,
   formData: FormData,
 ): Promise<ContactFormState> {
-  const result = Object.fromEntries(formData);
+  const result = {
+    ...Object.fromEntries(formData),
+    fundingStage: formData.getAll("fundingStage"),
+    investmentStage: formData.getAll("investmentStage"),
+  };
 
   const validatedFields = contactFormSchema.safeParse(result);
 

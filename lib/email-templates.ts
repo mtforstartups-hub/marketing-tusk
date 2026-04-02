@@ -20,12 +20,12 @@ function getRoleSpecificHtml(data: TemplateData) {
   `;
 
   if (data.role === "founder") {
-    rows += formatRow("Funding Stage", data.fundingStage);
+    rows += formatRow("Funding Stage", data.fundingStage.join(", "));
     rows += formatRow("Team Size", data.teamSize);
     rows += formatRow("Industry Sector", data.sector);
   } else if (data.role === "investor") {
     rows += formatRow("Investment Range", data.investmentRange);
-    rows += formatRow("Preferred Stage", data.investmentStage);
+    rows += formatRow("Preferred Stage", data.investmentStage.join(", "));
     rows += formatRow("Sectors of Interest", data.sectorsOfInterest);
   } else if (data.role === "enabler") {
     rows += formatRow("Organization Type", data.organizationType);
