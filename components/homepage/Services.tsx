@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Users,
   PresentationIcon as PresentationChart,
@@ -14,7 +14,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 export default function Services() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
   const services = [
     {
       icon: PresentationChart,
@@ -54,117 +56,137 @@ export default function Services() {
     },
   ];
 
-  const [servicesPerSlide, setServicesPerSlide] = useState(3);
-  const totalSlides = Math.ceil(services.length / servicesPerSlide);
-
+  // Auto-play functionality
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % totalSlides);
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        // Check if we've reached the end (with a 10px buffer for sub-pixel rendering)
+        if (Math.ceil(scrollLeft + clientWidth) >= scrollWidth - 10) {
+          scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          const itemWidth = scrollRef.current.children[0].clientWidth;
+          scrollRef.current.scrollBy({ left: itemWidth, behavior: "smooth" });
+        }
+      }
     }, 5000);
     return () => clearInterval(timer);
-  }, [totalSlides]);
+  }, []);
+
+  // Update active dot based on scroll position
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const itemWidth = scrollRef.current.children[0].clientWidth;
+      const index = Math.round(scrollLeft / itemWidth);
+      setActiveIndex(index);
+    }
+  };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+    if (scrollRef.current) {
+      const itemWidth = scrollRef.current.children[0].clientWidth;
+      scrollRef.current.scrollBy({ left: itemWidth, behavior: "smooth" });
+    }
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+    if (scrollRef.current) {
+      const itemWidth = scrollRef.current.children[0].clientWidth;
+      scrollRef.current.scrollBy({ left: -itemWidth, behavior: "smooth" });
+    }
   };
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setServicesPerSlide(1); // mobile
-      } else if (window.innerWidth < 1024) {
-        setServicesPerSlide(2); // tablet
-      } else {
-        setServicesPerSlide(3); // desktop
-      }
-    };
 
-    handleResize(); // initial run
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const scrollTo = (index: number) => {
+    if (scrollRef.current) {
+      const itemWidth = scrollRef.current.children[0].clientWidth;
+      scrollRef.current.scrollTo({
+        left: itemWidth * index,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
-    <div className="relative">
-      {/* Services Slider */}
-      <div className="overflow-hidden">
-        <div
-          className="flex transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+    <div className="w-full mx-auto py-8">
+      {/* Slider Container with Padding for Buttons */}
+      <div className="relative px-12 md:px-16">
+        {/* Previous Button */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-0 md:left-2 top-1/2 -translate-y-1/2 z-10 bg-background/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-muted hover:bg-primary-blue-light transition-colors group"
+          aria-label="Previous slide"
         >
-          {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-            <div key={slideIndex} className="w-full flex-shrink-0">
-              <div
-                className={`grid gap-6 px-4 ${
-                  servicesPerSlide === 1
-                    ? "grid-cols-1"
-                    : servicesPerSlide === 2
-                      ? "md:grid-cols-2"
-                      : "lg:grid-cols-3"
-                }`}
-              >
-                {services
-                  .slice(
-                    slideIndex * servicesPerSlide,
-                    (slideIndex + 1) * servicesPerSlide,
-                  )
-                  .map((service, index) => (
-                    <Card
-                      key={index}
-                      className="hover:shadow-lg transition-all duration-300 hover:-translate-y-2 border-primary-blue-light"
-                    >
-                      <CardHeader className="text-center">
-                        <div className="w-12 h-12 bg-primary-blue-light rounded-lg flex items-center justify-center mb-3 mx-auto transition-transform hover:scale-110">
-                          <service.icon className="h-6 w-6 text-primary-blue" />
-                        </div>
-                        <CardTitle className="text-lg text-foreground">
-                          {service.title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground text-sm text-center">
-                          {service.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
+          <ChevronLeft className="h-6 w-6 text-primary-blue group-hover:scale-110 transition-transform" />
+        </button>
+
+        {/* Scroll Track */}
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory py-4 -mx-3 scroll-smooth [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {services.map((service, index) => (
+            <div
+              key={index}
+              className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 snap-start px-3"
+            >
+              <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-2 border-primary-blue-light flex flex-col">
+                <CardHeader className="text-center">
+                  <div className="w-12 h-12 bg-primary-blue-light rounded-lg flex items-center justify-center mb-3 mx-auto transition-transform hover:scale-110">
+                    <service.icon className="h-6 w-6 text-primary-blue" />
+                  </div>
+                  <CardTitle className="text-xl text-foreground">
+                    {service.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow flex items-center justify-center">
+                  <p className="text-muted-foreground text-sm text-center">
+                    {service.description}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           ))}
         </div>
+
+        {/* Next Button */}
+        <button
+          onClick={nextSlide}
+          className="absolute right-0 md:right-2 top-1/2 -translate-y-1/2 z-10 bg-background/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-muted hover:bg-primary-blue-light transition-colors group"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="h-6 w-6 text-primary-blue group-hover:scale-110 transition-transform" />
+        </button>
       </div>
 
-      {/* Navigation Buttons */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors"
-      >
-        <ChevronLeft className="h-6 w-6 text-primary-blue" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg hover:bg-primary-blue-light transition-colors"
-      >
-        <ChevronRight className="h-6 w-6 text-primary-blue" />
-      </button>
-
       {/* Dots Indicator */}
-      <div className="flex justify-center mt-8 space-x-2">
-        {Array.from({ length: totalSlides }).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-colors ${
-              index === currentSlide
-                ? "bg-primary-blue"
-                : "bg-muted-foreground/30"
-            }`}
-          />
-        ))}
+      <div className="flex justify-center mt-6 space-x-2">
+        {services.map((_, index) => {
+          // Dynamically hide excessive dots based on screen width
+          const hideOnDesktop =
+            services.length > 3 && index > services.length - 3
+              ? "lg:hidden"
+              : "";
+          const hideOnTablet =
+            services.length > 2 && index > services.length - 2
+              ? "md:hidden"
+              : "";
+
+          return (
+            <button
+              key={index}
+              onClick={() => scrollTo(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              className={`h-3 rounded-full transition-all duration-300 ${
+                index === activeIndex
+                  ? "bg-primary-blue w-8" // Elongated pill for active state
+                  : "bg-muted-foreground/30 w-3 hover:bg-muted-foreground/50"
+              } ${hideOnDesktop} ${hideOnTablet}`}
+            />
+          );
+        })}
       </div>
     </div>
   );
