@@ -3,15 +3,37 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-//import { ThemeToggle } from "./theme-toggle";
-import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+
+const menuItems = [
+  { title: "Home", href: "/", subItems: [] },
+  {
+    title: "Services",
+    href: "/services",
+    subItems: [
+      { title: "Pitch Deck Design", href: "/" },
+      { title: "Website Development", href: "/" },
+      { title: "Social Media Marketing", href: "/" },
+      { title: "Branding Service", href: "/" },
+      { title: "Investor Outreach", href: "/" },
+      { title: "Ecosystem Enablement", href: "/" },
+    ],
+  },
+  { title: "Blog", href: "/blog", subItems: [] },
+  { title: "Contact", href: "/contact", subItems: [] },
+];
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  // const [activeMobileSubmenu, setActiveMobileSubmenu] = useState<string | null>(
+  //   null,
+  // );
+
+  // const toggleMobileSubmenu = (title: string) => {
+  //   setActiveMobileSubmenu((prev) => (prev === title ? null : title));
+  // };
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -22,95 +44,59 @@ export default function Header() {
             alt="Marketing Tusk Logo"
             width={150}
             height={80}
-          // className="dark:invert"
+            priority
           />
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link
-            href="/"
-            className="text-foreground hover:text-primary-blue transition-colors relative group"
-          >
-            Home
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
-          </Link>
-      <div
-  className="relative inline-block"
-  onMouseEnter={() => setServicesOpen(true)}
-  onMouseLeave={() => setServicesOpen(false)}
->
-  {/* Services text + triangle */}
-  <div className="flex items-center gap-1">
-    <Link
-      href="/services"
-      className="text-foreground hover:text-primary-blue transition-colors relative"
-    >
-      Services
-      <span
-        className={`absolute -bottom-1 left-0 h-0.5 bg-primary-blue transition-all duration-300 ${
-          servicesOpen ? "w-full" : "w-0"
-        }`}
-      ></span>
-    </Link>
+          {menuItems.map((item, index) => (
+            <div key={index} className="relative group">
+              <Link
+                href={item.href}
+                className="flex items-center gap-1 text-foreground hover:text-primary-blue transition-colors py-1"
+              >
+                {item.title}
+                {/* {item.subItems.length > 0 && (
+                  <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
+                )} */}
+                {/* Custom Underline Effect */}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
+              </Link>
 
-    {/* Triangle for click toggle */}
-    <ChevronDown
-      onClick={() => setServicesOpen(!servicesOpen)}
-      className={`h-4 w-4 cursor-pointer transition-transform duration-300 ${
-        servicesOpen ? "rotate-180" : "rotate-0"
-      }`}
-    />
-  </div>
-
-  {/* Dropdown */}
-  <div
-    className={`absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md transition-all duration-300 z-50 ${
-      servicesOpen ? "opacity-100 visible" : "opacity-0 invisible"
-    }`}
-  >
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-      Pitch Deck design
-    </a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-      Website Development
-    </a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-      Social Media Marketing
-    </a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-      Branding service
-    </a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-      Investor Outreach
-    </a>
-    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-      Ecosystem Enablement
-    </a>
-  </div>
-</div>
-          <Link
-            href="/blog"
-            className="text-foreground hover:text-primary-blue transition-colors relative group"
-          >
-            Blog
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
-          </Link>
-          <Link
-            href="/contact"
-            className="text-foreground hover:text-primary-blue transition-colors relative group"
-          >
-            Contact
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-blue transition-all group-hover:w-full"></span>
-          </Link>
+              {/* Desktop Submenu Dropdown */}
+              {/* {item.subItems.length > 0 && (
+                <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform translate-y-2 group-hover:translate-y-0 z-50">
+                  <div className="bg-background rounded-lg shadow-xl ring-1 ring-border p-2 flex flex-col w-56">
+                    {item.subItems.map((subItem, subIndex) => (
+                      <Link
+                        key={subIndex}
+                        href={subItem.href}
+                        className="px-4 py-2.5 text-sm text-muted-foreground hover:text-primary-blue hover:bg-accent rounded-md transition-colors"
+                      >
+                        {subItem.title}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )} */}
+            </div>
+          ))}
         </nav>
 
-        {/* Theme Toggle and Mobile Menu*/} 
+        {/* Action Button & Mobile Menu Toggle */}
         <div className="flex items-center space-x-4">
+          <Link href="/contact" className="hidden md:block">
+            <Button className="bg-primary-blue hover:bg-primary-blue-dark transform hover:scale-105 transition-all shadow-md">
+              Get Started
+            </Button>
+          </Link>
+
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden"
+            className="md:hidden p-2 text-foreground hover:text-primary-blue transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
               <X className="h-6 w-6" />
@@ -118,79 +104,72 @@ export default function Header() {
               <Menu className="h-6 w-6" />
             )}
           </button>
-
-          <Link href="/contact">
-            <Button className="hidden md:block bg-primary-blue hover:bg-primary-blue-dark transform hover:scale-105 transition-all">
-              Get Started
-            </Button>
-          </Link>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-background animate-in slide-in-from-top-2 duration-200">
-          <nav className="flex flex-col space-y-4 p-4">
-            <Link
-              href="/"
-              className="text-foreground hover:text-primary-blue transition-colors"
-            >
-              Home
-            </Link>
-  {/* Services button + triangle */}
-<div className="relative w-full flex flex-col">
-  {/* Services link + arrow */}
-  <div className="flex items-center gap-1 w-full relative">
-    {/* Services page link */}
-    <Link
-      href="/services"
-      className="text-foreground hover:text-primary-blue py-2"
-    >
-      Services
-    </Link>
+        <div className="md:hidden border-t bg-background animate-in slide-in-from-top-2 duration-300 ease-out shadow-lg">
+          <nav className="flex flex-col px-4 pt-2 pb-6 space-y-2 max-h-[80vh] overflow-y-auto">
+            {menuItems.map((item, index) => (
+              <div key={index} className="flex flex-col">
+                <div className="flex items-center justify-between py-3 border-b border-border/50">
+                  <Link
+                    href={item.href}
+                    className="text-foreground hover:text-primary-blue transition-colors font-medium text-lg w-full"
+                    onClick={() => {
+                      if (item.subItems.length === 0) setMobileMenuOpen(false);
+                    }}
+                  >
+                    {item.title}
+                  </Link>
 
-    {/* Arrow button to toggle dropdown */}
-    <button
-      onClick={() => setServicesOpen(!servicesOpen)}
-      className="p-2 relative"
-    >
-      <ChevronDown
-        className={`h-4 w-4 transition-transform duration-300 ${
-          servicesOpen ? "rotate-180" : "rotate-0"
-        }`}
-      />
-    </button>
+                  {/* Toggle button for mobile submenu (keeps the main link clickable) */}
+                  {/* {item.subItems.length > 0 && (
+                    <button
+                      onClick={() => toggleMobileSubmenu(item.title)}
+                      className="p-2 ml-2 bg-accent/50 rounded-md text-foreground hover:text-primary-blue transition-colors"
+                    >
+                      <ChevronDown
+                        className={`h-5 w-5 transition-transform duration-300 ${
+                          activeMobileSubmenu === item.title ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                  )} */}
+                </div>
 
-    {/* Dropdown menu absolutely positioned below the arrow */}
-    {servicesOpen && (
-      <div className="absolute top-full left-20 w-56 bg-white rounded-md shadow-lg z-50 mt-1">
-        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Pitch Deck design</a>
-        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Website Development</a>
-        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Social Media Marketing</a>
-        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Branding service</a>
-        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Investor Outreach</a>
-        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Ecosystem Enablement</a>
-      </div>
-    )}
-  </div>
-</div>
-            <Link
-              href="/blog"
-              className="text-foreground hover:text-primary-blue transition-colors"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/contact"
-              className="text-foreground hover:text-primary-blue transition-colors"
-            >
-              Contact
-            </Link>
-            <Link href="/contact">
-              <Button className="bg-primary-blue hover:bg-primary-blue-dark w-full">
-                Get Started
-              </Button>
-            </Link>
+                {/* Mobile Submenu Accordion */}
+                {/* {item.subItems.length > 0 && (
+                  <div
+                    className={`flex flex-col space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${
+                      activeMobileSubmenu === item.title
+                        ? "max-h-96 opacity-100 pt-2"
+                        : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    {item.subItems.map((subItem, subIndex) => (
+                      <Link
+                        key={subIndex}
+                        href={subItem.href}
+                        className="pl-4 py-2 text-muted-foreground hover:text-primary-blue border-l-2 border-transparent hover:border-primary-blue transition-all"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {subItem.title}
+                      </Link>
+                    ))}
+                  </div>
+                )} */}
+              </div>
+            ))}
+
+            <div className="pt-6">
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="bg-primary-blue hover:bg-primary-blue-dark w-full py-6 text-md shadow-md">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
           </nav>
         </div>
       )}

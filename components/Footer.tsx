@@ -7,6 +7,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import Image from "next/image";
+import whatsapp from "@/public/images/whatsapp.svg";
 
 export default function Footer() {
   return (
@@ -112,6 +113,13 @@ export default function Footer() {
                 connect@marketingtusk.com
               </li>
               <li className="hover:text-white transition-colors">
+                <Image
+                  src={whatsapp}
+                  alt="Call Us"
+                  width={20}
+                  height={20}
+                  className="inline-flex"
+                />{" "}
                 +91 70111 70693
               </li>
               <li className="hover:text-white transition-colors">

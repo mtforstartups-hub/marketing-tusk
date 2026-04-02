@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
+import whatsapp from "@/public/images/whatsapp.svg";
+import Image from "next/image";
 
 export default function ContactPage() {
   return (
@@ -79,15 +81,26 @@ export default function ContactPage() {
                 </Card>
 
                 <Card className="hover:shadow-lg transition-all duration-300">
-                  <CardContent className="flex items-center space-x-4 p-6">
-                    <div className="w-12 h-12 bg-primary-blue-light rounded-lg flex items-center justify-center">
-                      <Phone className="h-6 w-6 text-primary-blue" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Call Us</h3>
-                      <p className="text-muted-foreground">+91 70111 70693</p>
-                    </div>
-                  </CardContent>
+                  <a href="https://wa.me/917011170693" target="_blank">
+                    <CardContent className="flex items-center space-x-4 p-6">
+                      <div className="w-12 h-12 bg-primary-blue-light rounded-lg flex items-center justify-center">
+                        {/* <Phone className="h-6 w-6 text-primary-blue" /> */}
+                        <Image
+                          src={whatsapp}
+                          alt="Whatsapp logo"
+                          width={24}
+                          height={24}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground">
+                          {/* Call Us */}
+                          WhatsApp
+                        </h3>
+                        <p className="text-muted-foreground">+91 70111 70693</p>
+                      </div>
+                    </CardContent>
+                  </a>
                 </Card>
 
                 <Card className="hover:shadow-lg transition-all duration-300">
