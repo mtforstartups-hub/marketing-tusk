@@ -72,7 +72,7 @@ export default function ContactPage() {
                         Email Us
                       </h3>
                       <p className="text-muted-foreground">
-                        pranav@marketingtusk.com
+                        connect@marketingtusk.com
                       </p>
                     </div>
                   </CardContent>
