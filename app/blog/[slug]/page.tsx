@@ -1,22 +1,32 @@
-import { sanityFetch } from "@/sanity/lib/live"
-import { POST_BY_SLUG_QUERY, POSTS_QUERY } from "@/sanity/lib/queries"
-import { PortableText } from "@portabletext/react"
-import { notFound } from "next/navigation"
-import Image from "next/image"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { ArrowLeft, Calendar, User, Clock, Linkedin, Twitter, Facebook, Link as LinkIcon, Mail } from "lucide-react"
-import { urlFor } from "@/sanity/lib/image"
+import { sanityFetch } from "@/sanity/lib/live";
+import { POST_BY_SLUG_QUERY, POSTS_QUERY } from "@/sanity/lib/queries";
+import { PortableText } from "@portabletext/react";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  Clock,
+  Linkedin,
+  Twitter,
+  Facebook,
+  Link as LinkIcon,
+  Mail,
+} from "lucide-react";
+import { urlFor } from "@/sanity/lib/image";
 
-export const revalidate = 60
+export const revalidate = 60;
 
 const portableTextComponents = {
   types: {
     image: ({ value }: any) => {
-      if (!value?.asset?._ref) return null
+      if (!value?.asset?._ref) return null;
       return (
         <figure className="my-10 mx-auto rounded-xl overflow-hidden shadow-sm border border-border/60 bg-white">
           <Image
@@ -28,18 +38,36 @@ const portableTextComponents = {
           />
           {value.caption && (
             <figcaption className="p-3 bg-muted/30 text-center border-t border-border/30">
-              <span className="text-sm text-muted-foreground italic font-medium">{value.caption}</span>
+              <span className="text-sm text-muted-foreground italic font-medium">
+                {value.caption}
+              </span>
             </figcaption>
           )}
         </figure>
-      )
-    }
+      );
+    },
   },
   block: {
-    h1: ({ children }: any) => <h1 className="text-4xl md:text-5xl font-bold mt-12 mb-6 text-foreground tracking-tight">{children}</h1>,
-    h2: ({ children }: any) => <h2 className="text-3xl md:text-4xl font-bold mt-10 mb-5 text-foreground tracking-tight">{children}</h2>,
-    h3: ({ children }: any) => <h3 className="text-2xl font-bold mt-8 mb-4 text-foreground">{children}</h3>,
-    normal: ({ children }: any) => <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 font-light">{children}</p>,
+    h1: ({ children }: any) => (
+      <h1 className="text-4xl md:text-5xl font-bold mt-12 mb-6 text-foreground tracking-tight">
+        {children}
+      </h1>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="text-3xl md:text-4xl font-bold mt-10 mb-5 text-foreground tracking-tight">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="text-2xl font-bold mt-8 mb-4 text-foreground">
+        {children}
+      </h3>
+    ),
+    normal: ({ children }: any) => (
+      <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 font-light">
+        {children}
+      </p>
+    ),
     blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 border-primary-blue bg-primary-blue/5 pl-6 py-5 pr-5 my-10 mx-0 italic text-xl md:text-2xl text-foreground font-medium rounded-r-xl shadow-sm">
         {children}
@@ -47,53 +75,77 @@ const portableTextComponents = {
     ),
   },
   list: {
-    bullet: ({ children }: any) => <ul className="list-disc pl-8 mb-8 space-y-3 text-lg md:text-xl text-muted-foreground">{children}</ul>,
-    number: ({ children }: any) => <ol className="list-decimal pl-8 mb-8 space-y-3 text-lg md:text-xl text-muted-foreground">{children}</ol>,
+    bullet: ({ children }: any) => (
+      <ul className="list-disc pl-8 mb-8 space-y-3 text-lg md:text-xl text-muted-foreground">
+        {children}
+      </ul>
+    ),
+    number: ({ children }: any) => (
+      <ol className="list-decimal pl-8 mb-8 space-y-3 text-lg md:text-xl text-muted-foreground">
+        {children}
+      </ol>
+    ),
   },
   marks: {
-    strong: ({ children }: any) => <strong className="font-semibold text-foreground">{children}</strong>,
+    strong: ({ children }: any) => (
+      <strong className="font-semibold text-foreground">{children}</strong>
+    ),
     em: ({ children }: any) => <em className="italic">{children}</em>,
     link: ({ value, children }: any) => {
-      const target = (value?.href || '').startsWith('http') ? '_blank' : undefined
+      const target = (value?.href || "").startsWith("http")
+        ? "_blank"
+        : undefined;
       return (
-        <a href={value?.href} target={target} rel={target === '_blank' ? 'noindex nofollow' : ''} className="text-primary-blue hover:text-primary-blue-dark hover:underline underline-offset-4 transition-colors font-medium">
+        <a
+          href={value?.href}
+          target={target}
+          rel={target === "_blank" ? "noindex nofollow" : ""}
+          className="text-primary-blue hover:text-primary-blue-dark hover:underline underline-offset-4 transition-colors font-medium"
+        >
           {children}
         </a>
-      )
+      );
     },
   },
-}
+};
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const { slug } = await params
+export default async function BlogPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = await params;
 
   // Fetch current post
   const { data: post } = await sanityFetch({
     query: POST_BY_SLUG_QUERY,
-    params: { slug }
-  })
+    params: { slug },
+  });
 
   // Fetch recent posts for the related section
-  const { data: allPosts } = await sanityFetch({ query: POSTS_QUERY })
-  const relatedPosts = allPosts?.filter((p: any) => p._id !== post?._id).slice(0, 3) || []
+  const { data: allPosts } = await sanityFetch({ query: POSTS_QUERY });
+  const relatedPosts =
+    allPosts?.filter((p: any) => p._id !== post?._id).slice(0, 3) || [];
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
-  let readTime = "5 min read"
+  let readTime = "5 min read";
   if (post.body) {
     const text = post.body
       .filter((block: any) => block._type === "block" && block.children)
-      .map((block: any) => block.children.map((child: any) => child.text).join(""))
-      .join(" ")
-    const words = text.split(/\s+/).length
-    const minutes = Math.ceil(words / 200) || 1
-    readTime = `${minutes} min read`
+      .map((block: any) =>
+        block.children.map((child: any) => child.text).join(""),
+      )
+      .join(" ");
+    const words = text.split(/\s+/).length;
+    const minutes = Math.ceil(words / 200) || 1;
+    readTime = `${minutes} min read`;
   }
 
   // Fallback to placeholder if no image so the hero doesn't look completely empty
-  const heroImage = post.mainImage || "/placeholder.svg?height=1080&width=1920"
+  const heroImage = post.mainImage || "/placeholder.svg?height=1080&width=1920";
 
   return (
     <article className="min-h-screen bg-background pb-24 font-sans">
@@ -111,14 +163,20 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
         <div className="container mx-auto px-4 relative z-20 pb-16">
           <div className="max-w-5xl">
-            <Link href="/blog" className="inline-flex items-center text-white/70 hover:text-white mb-8 transition-colors font-medium text-sm tracking-wide uppercase">
+            <Link
+              href="/blog"
+              className="inline-flex items-center text-white/70 hover:text-white mb-8 transition-colors font-medium text-sm tracking-wide uppercase"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Insights
             </Link>
 
             <div className="flex flex-wrap gap-3 mb-6">
               {post.categories?.map((category: string) => (
-                <Badge key={category} className="bg-primary-blue hover:bg-primary-blue-dark text-white border-transparent px-3 py-1 shadow-md">
+                <Badge
+                  key={category}
+                  className="bg-primary-blue hover:bg-primary-blue-dark text-white border-transparent px-3 py-1 shadow-md"
+                >
                   {category}
                 </Badge>
               ))}
@@ -152,7 +210,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 {post.publishedAt && (
                   <div className="flex items-center">
                     <Calendar className="h-5 w-5 mr-2 opacity-80" />
-                    <span>{new Date(post.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+                    <span>
+                      {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
                   </div>
                 )}
                 <div className="flex items-center">
@@ -168,14 +232,18 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       {/* Main Content & Sidebar */}
       <section className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 max-w-7xl mx-auto">
-          
           {/* Main Article Body */}
           <div className="lg:col-span-8">
             <div className="prose prose-lg md:prose-xl max-w-none text-muted-foreground">
               {post.body ? (
-                <PortableText value={post.body} components={portableTextComponents} />
+                <PortableText
+                  value={post.body}
+                  components={portableTextComponents}
+                />
               ) : (
-                <p className="text-xl italic pt-8">This post has no content yet.</p>
+                <p className="text-xl italic pt-8">
+                  This post has no content yet.
+                </p>
               )}
             </div>
 
@@ -184,13 +252,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <div className="flex items-center gap-4">
                 <span className="font-semibold text-foreground">Tags:</span>
                 <div className="flex flex-wrap gap-2">
-                  {post.categories?.map((cat: string) => (
-                    <Badge variant="secondary" key={cat} className="bg-muted hover:bg-muted text-muted-foreground">
+                  {post.tags?.map((cat: string, index: number) => (
+                    <Badge
+                      variant="secondary"
+                      key={index}
+                      className="bg-muted hover:bg-muted text-muted-foreground"
+                    >
                       {cat}
                     </Badge>
                   ))}
-                  {(!post.categories || post.categories.length === 0) && (
-                    <span className="text-muted-foreground text-sm">No tags</span>
+                  {(!post.tags || post.tags.length === 0) && (
+                    <span className="text-muted-foreground text-sm">
+                      No tags
+                    </span>
                   )}
                 </div>
               </div>
@@ -218,10 +292,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                         <User className="h-8 w-8 text-muted-foreground" />
                       </div>
                     )}
-                    <h3 className="text-xl font-bold text-foreground mb-1">{post.author}</h3>
-                    <p className="text-sm text-primary-blue font-medium mb-4">Content Contributor</p>
+                    <h3 className="text-xl font-bold text-foreground mb-1">
+                      {post.author}
+                    </h3>
+                    <p className="text-sm text-primary-blue font-medium mb-4">
+                      Content Contributor
+                    </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Bringing you the latest insights, strategies, and deep-dives into the startup ecosystem.
+                      Bringing you the latest insights, strategies, and
+                      deep-dives into the startup ecosystem.
                     </p>
                   </div>
                 </CardContent>
@@ -230,18 +309,36 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
             {/* Share Widget */}
             <div className="bg-background border border-border/60 rounded-xl p-6 shadow-sm">
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">Share this article</h3>
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">
+                Share this article
+              </h3>
               <div className="flex gap-3">
-                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600 transition-colors">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-full hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600 transition-colors"
+                >
                   <Linkedin className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full hover:bg-sky-50 hover:text-sky-500 hover:border-sky-500 transition-colors">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-full hover:bg-sky-50 hover:text-sky-500 hover:border-sky-500 transition-colors"
+                >
                   <Twitter className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full hover:bg-blue-50 hover:text-blue-700 hover:border-blue-700 transition-colors">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-full hover:bg-blue-50 hover:text-blue-700 hover:border-blue-700 transition-colors"
+                >
                   <Facebook className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full hover:bg-gray-100 hover:text-foreground hover:border-foreground transition-colors">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-full hover:bg-gray-100 hover:text-foreground hover:border-foreground transition-colors"
+                >
                   <LinkIcon className="h-4 w-4" />
                 </Button>
               </div>
@@ -254,12 +351,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 <Mail className="h-8 w-8 text-white/80 mb-4" />
                 <h3 className="text-xl font-bold mb-2">Weekly Insights</h3>
                 <p className="text-white/80 text-sm mb-6 leading-relaxed">
-                  Join 5,000+ founders receiving our best strategies and market analysis every week.
+                  Join 5,000+ founders receiving our best strategies and market
+                  analysis every week.
                 </p>
                 <div className="space-y-3">
-                  <Input 
-                    placeholder="Work email address" 
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:ring-1 focus-visible:ring-white h-11" 
+                  <Input
+                    placeholder="Work email address"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:ring-1 focus-visible:ring-white h-11"
                   />
                   <Button className="w-full bg-white text-primary-blue hover:bg-gray-50 h-11 font-semibold">
                     Subscribe
@@ -271,13 +369,22 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             {/* Related Articles */}
             {relatedPosts.length > 0 && (
               <div className="pt-6">
-                <h3 className="text-lg font-bold text-foreground mb-6 uppercase tracking-wide border-b border-border/60 pb-3">Related Reading</h3>
+                <h3 className="text-lg font-bold text-foreground mb-6 uppercase tracking-wide border-b border-border/60 pb-3">
+                  Related Reading
+                </h3>
                 <div className="space-y-6">
                   {relatedPosts.map((relPost: any) => (
-                    <Link key={relPost._id} href={`/blog/${relPost.slug}`} className="group flex gap-4 items-start">
+                    <Link
+                      key={relPost._id}
+                      href={`/blog/${relPost.slug}`}
+                      className="group flex gap-4 items-start"
+                    >
                       <div className="relative w-24 h-20 rounded-md overflow-hidden flex-shrink-0 bg-muted">
                         <Image
-                          src={relPost.mainImage || "/placeholder.svg?height=80&width=96"}
+                          src={
+                            relPost.mainImage ||
+                            "/placeholder.svg?height=80&width=96"
+                          }
                           alt={relPost.title}
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -288,7 +395,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                           {relPost.title}
                         </h4>
                         <span className="text-xs text-muted-foreground font-medium">
-                          {new Date(relPost.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          {new Date(relPost.publishedAt).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric", year: "numeric" },
+                          )}
                         </span>
                       </div>
                     </Link>
@@ -300,5 +410,5 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         </div>
       </section>
     </article>
-  )
+  );
 }

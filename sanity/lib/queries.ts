@@ -1,6 +1,7 @@
 import { defineQuery } from "next-sanity";
 
-export const POSTS_QUERY = defineQuery(`*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+export const POSTS_QUERY =
+  defineQuery(`*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
   _id,
   title,
   "slug": slug.current,
@@ -8,11 +9,13 @@ export const POSTS_QUERY = defineQuery(`*[_type == "post" && defined(slug.curren
   "authorImage": author->image.asset->url,
   "mainImage": mainImage.asset->url,
   "categories": categories[]->title,
+  tags,
   publishedAt,
   body
 }`);
 
-export const POST_BY_SLUG_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0] {
+export const POST_BY_SLUG_QUERY =
+  defineQuery(`*[_type == "post" && slug.current == $slug][0] {
   _id,
   title,
   "slug": slug.current,
@@ -20,6 +23,7 @@ export const POST_BY_SLUG_QUERY = defineQuery(`*[_type == "post" && slug.current
   "authorImage": author->image.asset->url,
   "mainImage": mainImage.asset->url,
   "categories": categories[]->title,
+  tags,
   publishedAt,
   body
 }`);
