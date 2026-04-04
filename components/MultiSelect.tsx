@@ -15,6 +15,17 @@ interface MultiSelectProps {
   error?: string;
 }
 
+/**
+ * Renders a multi-select dropdown that lets users select or deselect multiple options and emits hidden inputs for form submission.
+ *
+ * The toggle button shows either the placeholder or the labels of selected options and a listbox is shown when open. Clicking outside closes the list; each selected value is output as a hidden input with the provided `name`.
+ *
+ * @param name - The name attribute used for each generated hidden input so selections are included in form submissions
+ * @param options - Array of selectable options, each with a `value` and `label`
+ * @param placeholder - Text shown in the button when no options are selected (defaults to `"Select options"`)
+ * @param error - Optional error message rendered beneath the control
+ * @returns The MultiSelect React element
+ */
 export function MultiSelect({
   name,
   options,

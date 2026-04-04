@@ -39,6 +39,15 @@ const INVESTMENT_STAGES = [
   { value: "growth", label: "Growth Stage" },
 ];
 
+/**
+ * Renders a contact form that conditionally shows role-specific fields and submits via a server action.
+ *
+ * Displays basic contact fields (name, email, phone, company), a role selector that reveals additional inputs for
+ * founders, investors, or enablers, a message textarea, inline field validation errors from the server response,
+ * top-level submission feedback, and a submit button with a loading state.
+ *
+ * @returns The rendered ContactForm JSX element.
+ */
 export default function ContactForm() {
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [state, formAction, pending] = useActionState(

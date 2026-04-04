@@ -59,6 +59,17 @@ export type ContactFormState = {
   errors?: Record<string, string[]>;
 };
 
+/**
+ * Appends a validated contact form submission as a single row to a Google Sheets spreadsheet.
+ *
+ * The row covers columns A through P and includes a localized timestamp (en-IN, Asia/Kolkata),
+ * shared fields (name, email, phone, company, role, message), and role-specific columns.
+ * For the "founder" and "investor" roles, multi-select arrays (`fundingStage`, `investmentStage`)
+ * are serialized as comma-separated strings. The function uses Google OAuth2 credentials from
+ * environment variables and writes to the spreadsheet identified by `env.SPREADSHEET_ID`.
+ *
+ * @param data - Validated contact form data conforming to `contactFormSchema`
+ */
 export async function appendToGoogleSheet(
   data: z.infer<typeof contactFormSchema>,
 ) {
@@ -104,6 +115,15 @@ export async function appendToGoogleSheet(
   });
 }
 
+/**
+ * Handle a contact form submission by validating input, sending an admin email, and appending the submission to Google Sheets.
+ *
+ * Attempts to validate the provided form data against the contact form schema, then concurrently sends an admin notification email and saves the submission to Google Sheets. If validation fails, returns the validation errors. If both the email and the sheet backup fail, returns a failure result; if at least one operation succeeds, returns a success result.
+ *
+ * @param prevState - Previous contact form state (accepted for signature compatibility; not used)
+ * @param formData - The submitted FormData object containing the form fields
+ * @returns The resulting ContactFormState indicating overall success, a user-facing message, and optional field-level errors when validation fails
+ */
 export default async function submitContactForm(
   prevState: ContactFormState,
   formData: FormData,
