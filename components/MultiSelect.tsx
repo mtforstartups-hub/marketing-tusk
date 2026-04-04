@@ -58,6 +58,8 @@ export function MultiSelect({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
         className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
       >
         <span className={selected.length === 0 ? "text-muted-foreground" : ""}>
@@ -67,10 +69,19 @@ export function MultiSelect({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
+        <div role="listbox" className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
           {options.map((option) => (
             <div
               key={option.value}
+              role="option"
+              aria-selected={selected.includes(option.value)}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toggle(option.value);
+                }
+              }}
               onClick={() => toggle(option.value)}
               className="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
             >
