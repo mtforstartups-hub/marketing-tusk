@@ -38,7 +38,15 @@ import Link from "next/link"
 export default function ServicesPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const services = [
+  const services: {
+    icon: any;
+    title: string;
+    description: string;
+    features: string[];
+    duration?: string;
+    engagementModel?: string;
+    category: string;
+  }[] = [
     {
       icon: PresentationChart,
       title: "Pitch Deck Design",
@@ -80,7 +88,7 @@ export default function ServicesPage() {
         "Engagement strategy",
         "Performance tracking",
       ],
-      duration: "Monthly Retainer",
+      engagementModel: "Monthly Retainer",
       category: "Marketing",
     },
     {
@@ -110,7 +118,7 @@ export default function ServicesPage() {
         "Profile optimization",
         "Audience building",
       ],
-      duration: "Monthly Retainer",
+      engagementModel: "Monthly Retainer",
       category: "Marketing",
     },
     {
@@ -125,7 +133,7 @@ export default function ServicesPage() {
         "Broadcast campaigns",
         "Conversion tracking",
       ],
-      duration: "5-10 Days Setup + Monthly",
+      engagementModel: "5-10 Days Setup + Monthly",
       category: "Marketing",
     },
     {
@@ -140,7 +148,7 @@ export default function ServicesPage() {
         "Copywriting",
         "Content distribution",
       ],
-      duration: "Monthly Retainer",
+      engagementModel: "Monthly Retainer",
       category: "Marketing",
     },
     {
@@ -170,7 +178,7 @@ export default function ServicesPage() {
         "Branding assets",
         "Audience engagement",
       ],
-      duration: "Campaign-Based",
+      engagementModel: "Campaign-Based",
       category: "Marketing",
     },
     {
@@ -185,7 +193,7 @@ export default function ServicesPage() {
         "Creative design",
         "Campaign execution",
       ],
-      duration: "Campaign-Based",
+      engagementModel: "Campaign-Based",
       category: "Advertising",
     },
     {
@@ -215,7 +223,7 @@ export default function ServicesPage() {
         "Funnel optimization",
         "Performance tracking",
       ],
-      duration: "Monthly Retainer",
+      engagementModel: "Monthly Retainer",
       category: "Advertising",
     },
 
@@ -362,13 +370,24 @@ export default function ServicesPage() {
                       </div>
                       <span className="text-sm font-semibold text-primary-blue">{service.price}</span>
                     </div>*/}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-primary-blue" />
-                        <span className="text-sm m-3 font-medium text-foreground">Timeline</span>
+                    {service.duration && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="h-4 w-4 text-primary-blue" />
+                          <span className="text-sm m-3 font-medium text-foreground">Timeline</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{service.duration}</span>
                       </div>
-                      <span className="text-sm text-muted-foreground">{service.duration}</span>
-                    </div>
+                    )}
+                    {service.engagementModel && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Target className="h-4 w-4 text-primary-blue" />
+                          <span className="text-sm m-3 font-medium text-foreground">Engagement Model</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{service.engagementModel}</span>
+                      </div>
+                    )}
                   </div>
 
                   <Link href="/contact">
