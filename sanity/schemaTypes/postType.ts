@@ -39,8 +39,11 @@ export const postType = defineType({
     }),
     defineField({
       name: "categories",
+      title: "Category",
       type: "array",
       of: [defineArrayMember({ type: "reference", to: { type: "category" } })],
+      description:
+        "Primary classification for this post (e.g., Web Development, Marketing)",
     }),
     defineField({
       name: "tags",
@@ -50,6 +53,8 @@ export const postType = defineType({
       options: {
         layout: "tags",
       },
+      description:
+        "Additional labels for fine-grained categorization (e.g., React, Next.js, Frontend)",
     }),
     defineField({
       name: "publishedAt",

@@ -1,62 +1,76 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { ArrowRight, Search, Calendar, Clock, User, Filter } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  ArrowRight,
+  Search,
+  Calendar,
+  Clock,
+  User,
+  Filter,
+} from "lucide-react";
 
 type Post = {
-  _id: string
-  title: string
-  slug: string
-  author: string | null
-  authorImage: any | null
-  mainImage: string | null
-  categories: string[] | null
-  publishedAt: string | null
-  body: any | null
-}
+  _id: string;
+  title: string;
+  slug: string;
+  author: string | null;
+  authorImage: any | null;
+  mainImage: string | null;
+  categories: string[] | null;
+  tags: string[] | null;
+  publishedAt: string | null;
+  body: any | null;
+};
 
 const getExcerpt = (blocks: any[]) => {
-  if (!blocks) return ""
+  if (!blocks) return "";
   const text = blocks
     .filter((block) => block._type === "block" && block.children)
     .map((block) => block.children.map((child: any) => child.text).join(""))
-    .join(" ")
-  return text.length > 150 ? text.substring(0, 150) + "..." : text
-}
+    .join(" ");
+  return text.length > 150 ? text.substring(0, 150) + "..." : text;
+};
 
 const getReadTime = (blocks: any[]) => {
-  const text = getExcerpt(blocks)
-  const words = text.split(/\s+/).length
-  const minutes = Math.ceil(words / 200) || 1
-  return `${minutes} min read`
-}
+  const text = getExcerpt(blocks);
+  const words = text.split(/\s+/).length;
+  const minutes = Math.ceil(words / 200) || 1;
+  return `${minutes} min read`;
+};
 
 export function BlogList({ posts }: { posts: Post[] }) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const allCategories = Array.from(
-    new Set((posts || []).flatMap((post) => post.categories || []).filter(Boolean))
-  )
-  const categories = ["All", ...allCategories]
+    new Set(
+      (posts || []).flatMap((post) => post.categories || []).filter(Boolean),
+    ),
+  );
+  const categories = ["All", ...allCategories];
 
   const filteredPosts = (posts || []).filter((post) => {
-    const titleMatch = post.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    const excerptMatch = getExcerpt(post.body || []).toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesSearch = titleMatch || excerptMatch
-    
-    // We assume single primary category check or check arrays
-    const postCats = post.categories || []
-    const matchesCategory = selectedCategory === "All" || postCats.includes(selectedCategory)
-    
-    return matchesSearch && matchesCategory
-  })
+    const titleMatch = post.title
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const excerptMatch = getExcerpt(post.body || [])
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSearch = titleMatch || excerptMatch;
+
+    const postCats = post.categories || [];
+    const matchesCategory =
+      selectedCategory === "All" || postCats.includes(selectedCategory);
+
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <>
@@ -70,22 +84,26 @@ export function BlogList({ posts }: { posts: Post[] }) {
             Latest <span className="text-primary-blue">Insights</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Stay updated with the latest trends, tips, and insights from the Indian startup ecosystem. Learn from
-            industry experts and successful entrepreneurs.
+            Stay updated with the latest trends, tips, and insights from the
+            Indian startup ecosystem. Learn from industry experts and successful
+            entrepreneurs.
           </p>
         </div>
       </section>
 
       {/* Main Content Area */}
-      {(!posts || posts.length === 0) ? (
+      {!posts || posts.length === 0 ? (
         <section className="py-24 bg-background text-center">
           <div className="container mx-auto px-4">
             <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
               <Search className="h-12 w-12 text-muted-foreground" />
             </div>
-            <h2 className="text-3xl font-bold text-foreground mb-4">No articles published yet</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              No articles published yet
+            </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              We&apos;re currently working on creating insightful content for you. Please check back later!
+              We&apos;re currently working on creating insightful content for
+              you. Please check back later!
             </p>
           </div>
         </section>
@@ -112,10 +130,16 @@ export function BlogList({ posts }: { posts: Post[] }) {
                     {categories.map((category) => (
                       <Button
                         key={category}
-                        variant={selectedCategory === category ? "default" : "outline"}
+                        variant={
+                          selectedCategory === category ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setSelectedCategory(category as string)}
-                        className={selectedCategory === category ? "bg-primary-blue text-white hover:bg-primary-blue-dark" : "hover:text-primary-blue hover:border-primary-blue"}
+                        className={
+                          selectedCategory === category
+                            ? "bg-primary-blue text-white hover:bg-primary-blue-dark"
+                            : "hover:text-primary-blue hover:border-primary-blue"
+                        }
                       >
                         {category as string}
                       </Button>
@@ -138,7 +162,8 @@ export function BlogList({ posts }: { posts: Post[] }) {
                       : `${selectedCategory} Articles`}
                 </h2>
                 <p className="text-muted-foreground">
-                  {filteredPosts.length} article{filteredPosts.length !== 1 ? "s" : ""} found
+                  {filteredPosts.length} article
+                  {filteredPosts.length !== 1 ? "s" : ""} found
                 </p>
               </div>
 
@@ -147,15 +172,18 @@ export function BlogList({ posts }: { posts: Post[] }) {
                   <div className="w-20 h-20 bg-primary-blue-light/30 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="h-10 w-10 text-primary-blue" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-foreground mb-2">No matching articles</h3>
+                  <h3 className="text-2xl font-semibold text-foreground mb-2">
+                    No matching articles
+                  </h3>
                   <p className="text-muted-foreground mb-6">
-                    Try adjusting your search terms or browse a different category.
+                    Try adjusting your search terms or browse a different
+                    category.
                   </p>
                   <Button
                     className="bg-primary-blue text-white hover:bg-primary-blue-dark"
                     onClick={() => {
-                      setSearchTerm("")
-                      setSelectedCategory("All")
+                      setSearchTerm("");
+                      setSelectedCategory("All");
                     }}
                   >
                     Clear Filters
@@ -164,11 +192,18 @@ export function BlogList({ posts }: { posts: Post[] }) {
               ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredPosts.map((post) => (
-                    <Link key={post._id} href={`/blog/${post.slug}`} className="block h-full">
+                    <Link
+                      key={post._id}
+                      href={`/blog/${post.slug}`}
+                      className="block h-full"
+                    >
                       <Card className="hover:shadow-2xl hover:shadow-primary-blue/10 transition-all duration-300 hover:-translate-y-2 cursor-pointer group h-full flex flex-col border-border/50 bg-white">
                         <div className="relative overflow-hidden rounded-t-xl">
                           <Image
-                            src={post.mainImage || "/placeholder.svg?height=200&width=400"}
+                            src={
+                              post.mainImage ||
+                              "/placeholder.svg?height=200&width=400"
+                            }
                             alt={post.title || "Blog post"}
                             className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110"
                             width={500}
@@ -195,7 +230,15 @@ export function BlogList({ posts }: { posts: Post[] }) {
                             {post.publishedAt && (
                               <div className="flex items-center space-x-1 pb-1">
                                 <Calendar className="h-3.5 w-3.5" />
-                                <span>{new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                                <span>
+                                  {new Date(
+                                    post.publishedAt,
+                                  ).toLocaleDateString("en-US", {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
+                                </span>
                               </div>
                             )}
                             <div className="flex items-center space-x-1 pb-1">
@@ -208,9 +251,7 @@ export function BlogList({ posts }: { posts: Post[] }) {
                           <p className="text-muted-foreground line-clamp-3 mb-6 text-sm/relaxed">
                             {getExcerpt(post.body)}
                           </p>
-                          <div
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border h-9 px-4 py-2 bg-transparent border-primary-blue text-primary-blue group-hover:bg-primary-blue group-hover:text-white"
-                          >
+                          <div className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border h-9 px-4 py-2 bg-transparent border-primary-blue text-primary-blue group-hover:bg-primary-blue group-hover:text-white">
                             Read Article
                             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                           </div>
@@ -231,22 +272,24 @@ export function BlogList({ posts }: { posts: Post[] }) {
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-4xl font-bold mb-4">Stay Updated</h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Get the latest insights, tips, and startup stories delivered directly to your inbox.
+            Get the latest insights, tips, and startup stories delivered
+            directly to your inbox.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <Input 
-              type="email" 
-              placeholder="Enter your email" 
-              className="bg-white/95 text-gray-900 border-0 focus-visible:ring-2 focus-visible:ring-white" 
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              className="bg-white/95 text-gray-900 border-0 focus-visible:ring-2 focus-visible:ring-white"
             />
             <Button className="bg-white text-primary-blue hover:bg-gray-100 font-semibold shadow-lg hover:shadow-xl transition-all">
               Subscribe
             </Button>
           </div>
-          <p className="text-sm opacity-75 mt-5">Join 5,000+ entrepreneurs who read our weekly newsletter</p>
+          <p className="text-sm opacity-75 mt-5">
+            Join 5,000+ entrepreneurs who read our weekly newsletter
+          </p>
         </div>
       </section>
     </>
-  )
+  );
 }
-
