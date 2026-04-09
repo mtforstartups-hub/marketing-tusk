@@ -18,6 +18,7 @@ export default function BlogPostSearch() {
     } else {
       params.delete("search");
     }
+    params.delete("page");
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 
