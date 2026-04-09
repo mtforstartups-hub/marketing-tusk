@@ -1,27 +1,34 @@
-'use client'
+"use client";
 
 /**
- * This configuration is used to for the Sanity Studio that’s mounted on the `\app\studio\[[...tool]]\page.tsx` route
+ * This configuration is used to for the Sanity Studio that's mounted on the `\app\studio\[[...tool]]\page.tsx` route
  */
 
 // import {visionTool} from '@sanity/vision'
-import { defineConfig } from 'sanity'
-import { structureTool } from 'sanity/structure'
-import { media } from 'sanity-plugin-media'
+import { defineConfig } from "sanity";
+import { structureTool } from "sanity/structure";
+import { media } from "sanity-plugin-media";
 
 // Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
-import { apiVersion, dataset, projectId } from './sanity/env'
-import { schema } from './sanity/schemaTypes'
-import { structure } from './sanity/structure'
-
-import { presentationTool } from 'sanity/presentation'
+import { apiVersion, dataset, projectId } from "./sanity/env";
+import { schema } from "./sanity/schemaTypes";
+import { structure } from "./sanity/structure";
 
 export default defineConfig({
-  basePath: '/studio',
+  basePath: "/studio",
+  title: "Marketing Tusk Studio",
   projectId,
   dataset,
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema,
+  auth: {
+    providers: (prev) => {
+      return prev.filter(
+        (provider) => provider.name !== "github" && provider.name !== "sanity",
+      );
+    },
+    // redirectOnSingle: true,
+  },
   plugins: [
     structureTool({ structure }),
     // Vision is for querying with GROQ from inside the Studio
@@ -38,6 +45,6 @@ export default defineConfig({
     //     ],
     //   },
     // }),
-    media()
+    media(),
   ],
-})
+});
