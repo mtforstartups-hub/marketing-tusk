@@ -99,7 +99,7 @@ const portableTextComponents = {
         <a
           href={value?.href}
           target={target}
-          rel={target === "_blank" ? "noindex nofollow" : ""}
+          rel={target === "_blank" ? "noopener noreferrer nofollow" : undefined}
           className="text-primary-blue hover:text-primary-blue-dark hover:underline underline-offset-4 transition-colors font-medium"
         >
           {children}
