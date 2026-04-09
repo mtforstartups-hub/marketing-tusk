@@ -26,13 +26,15 @@ export default function BlogPostSearch() {
     <div className="relative flex-1 max-w-md">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
       <Input
+        key={searchParams.get("search") ?? ""}
         type="text"
         placeholder="Search articles..."
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
-        defaultValue={searchParams.get("search")?.toString()}
+        defaultValue={searchParams.get("search") ?? ""}
         className="pl-10 focus-visible:ring-primary-blue"
+      />
       />
     </div>
   );
