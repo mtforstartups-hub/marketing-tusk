@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 export default function SocialBar() {
     const pathname = usePathname();
 
-    if (pathname?.startsWith("/studio")) {
+    const isStudioRoute = pathname === "/studio" || pathname?.startsWith("/studio/");
+    if (isStudioRoute) {
         return null;
     }
 
