@@ -1,0 +1,57 @@
+name: Deploy Vercel Preview
+
+# Trigger this workflow when a PR review is submitted
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+jobs:
+  deploy-preview:
+    # ONLY run if the review is an "Approval" AND the reviewer is the CodeRabbit bot.
+    # (You can remove the second condition if you also want human approvals to trigger the deployment)
+    if: github.event.review.state == 'approved' && github.event.review.user.login == 'coderabbitai[bot]'
+    runs-on: ubuntu-latest
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.11"
+
+      - name: Install Vercel CLI
+        run: bun install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        id: vercel_deploy
+        run: |
+          DEPLOY_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "PREVIEW_URL=$DEPLOY_URL" >> $GITHUB_ENV
+
+      # Optional: Post the Vercel Preview URL as a comment back on the PR
+      - name: Comment PR with Preview URL
+        uses: actions/github-script@v8
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ **CodeRabbit Approved!**\n\n🚀 Preview Deployment is ready: ${process.env.PREVIEW_URL}`
+            })
