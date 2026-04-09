@@ -1,8 +1,15 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function SocialBar() {
+    const pathname = usePathname();
+
+    if (pathname?.startsWith("/studio")) {
+        return null;
+    }
+
     return (
         <div className="fixed right-4 bottom-6 z-50 flex flex-col items-center gap-3">
             <a
