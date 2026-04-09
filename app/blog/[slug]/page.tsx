@@ -1,5 +1,3 @@
-import { sanityFetch } from "@/sanity/lib/live";
-import { POST_BY_SLUG_QUERY, POSTS_QUERY } from "@/sanity/lib/queries";
 import { PortableText } from "@portabletext/react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -8,20 +6,77 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  ArrowLeft,
-  Calendar,
-  User,
-  Clock,
-  Linkedin,
-  Twitter,
-  Facebook,
-  Link as LinkIcon,
-  Mail,
-} from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, Mail } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
+import ShareButtons from "@/components/ShareButtons";
+
+import { Metadata } from "next";
+import { getPost, getRelatedPosts } from "@/sanity/lib/data";
 
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const slug = (await params).slug;
+
+  const post = await getPost(slug);
+
+  if (!post) {
+    return {
+      title: "Post Not Found",
+    };
+  }
+
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.marketingtusk.com";
+
+  const ogImage = post.mainImage
+    ? post.mainImage
+    : `${siteUrl}/placeholder.jpg`;
+
+  const description = post.body
+    ? post.body
+        .filter((block: any) => block._type === "block" && block.children)
+        .map((block: any) =>
+          block.children.map((child: any) => child.text).join(""),
+        )
+        .join(" ")
+        .substring(0, 160) + "..."
+    : "Read this insightful article from Marketing Tusk.";
+
+  return {
+    title: `${post.title} | Marketing Tusk Insights`,
+    description,
+    metadataBase: new URL(siteUrl),
+    // keywords: will add later
+    authors: [post.author || "Marketing Tusk"],
+    openGraph: {
+      title: post.title,
+      description,
+      url: `${siteUrl}/blog/${slug}`,
+      type: "article",
+      publishedTime: post.publishedAt,
+      authors: [post.author || "Marketing Tusk"],
+      images: [
+        {
+          url: post.mainImage || "/placeholder.jpg",
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: [ogImage],
+    },
+  };
+}
 
 const portableTextComponents = {
   types: {
@@ -112,20 +167,13 @@ const portableTextComponents = {
 export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
+  const slug = (await params).slug;
 
-  // Fetch current post
-  const { data: post } = await sanityFetch({
-    query: POST_BY_SLUG_QUERY,
-    params: { slug },
-  });
+  const post = await getPost(slug);
 
-  // Fetch recent posts for the related section
-  const { data: allPosts } = await sanityFetch({ query: POSTS_QUERY });
-  const relatedPosts =
-    allPosts?.filter((p: any) => p._id !== post?._id).slice(0, 3) || [];
+  const relatedPosts = await getRelatedPosts(post?._id);
 
   if (!post) {
     notFound();
@@ -312,36 +360,7 @@ export default async function BlogPostPage({
               <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">
                 Share this article
               </h3>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600 transition-colors"
-                >
-                  <Linkedin className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full hover:bg-sky-50 hover:text-sky-500 hover:border-sky-500 transition-colors"
-                >
-                  <Twitter className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full hover:bg-blue-50 hover:text-blue-700 hover:border-blue-700 transition-colors"
-                >
-                  <Facebook className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full hover:bg-gray-100 hover:text-foreground hover:border-foreground transition-colors"
-                >
-                  <LinkIcon className="h-4 w-4" />
-                </Button>
-              </div>
+              <ShareButtons title={post.title} />
             </div>
 
             {/* Newsletter Subscription */}

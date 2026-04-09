@@ -27,3 +27,12 @@ export const POST_BY_SLUG_QUERY =
   publishedAt,
   body
 }`);
+
+export const RELATED_POSTS_QUERY =
+  defineQuery(`*[_type == "post" && _id != $currentPostId] | order(publishedAt desc)[0...3] {
+    _id,
+    title,
+    slug,
+    mainImage,
+    publishedAt,
+  }`);
