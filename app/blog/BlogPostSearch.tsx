@@ -35,7 +35,6 @@ export default function BlogPostSearch() {
         defaultValue={searchParams.get("search") ?? ""}
         className="pl-10 focus-visible:ring-primary-blue"
       />
-      />
     </div>
   );
 }

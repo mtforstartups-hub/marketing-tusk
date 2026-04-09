@@ -46,9 +46,9 @@ export const POSTS_COUNT_QUERY = defineQuery(
   ])`
 );
 
-// Returns a deduplicated list of all category titles used across posts.
+// Returns a deduplicated list of all category titles used across published posts.
 export const CATEGORIES_QUERY = defineQuery(
-  `array::unique(*[_type == "category"] | order(title asc).title)`
+  `array::unique(*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))].categories[]->title) | order(@ asc)`
 );
 
 export const POST_BY_SLUG_QUERY =
