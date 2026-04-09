@@ -22,7 +22,8 @@ export default async function BlogPage(props: {
   const searchParams = await props.searchParams;
   const category = searchParams?.category || "";
   const query = searchParams?.search || "";
-  const currentPage = Number(searchParams?.page) || 1;
+  const rawPage = Number.parseInt(searchParams?.page ?? "1", 10);
+  const currentPage = rawPage > 0 ? rawPage : 1;
 
   const { data: categories } = await sanityFetch({ query: CATEGORIES_QUERY });
   const categoryList: string[] = categories ?? [];
