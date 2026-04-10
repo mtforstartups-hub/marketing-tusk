@@ -9,6 +9,39 @@ import {
 import Image from "next/image";
 import whatsapp from "@/public/images/whatsapp.svg";
 
+const socialLinks = [
+  {
+    name: "LinkedIn",
+    href: "https://linkedin.com/company/marketingtusk",
+    icon: Linkedin,
+    clssname: "linkedin",
+  },
+  {
+    name: "Twitter",
+    href: "https://twitter.com/marketingtusk",
+    icon: Twitter,
+    clssname: "twitter",
+  },
+  {
+    name: "Instagram",
+    href: "https://instagram.com/marketingtusk",
+    icon: Instagram,
+    clssname: "instagram",
+  },
+  {
+    name: "Facebook",
+    href: "https://facebook.com/marketingtusk",
+    icon: Facebook,
+    clssname: "facebook",
+  },
+  {
+    name: "WhatsApp",
+    href: "https://wa.me/917011170693",
+    icon: MessageCircle,
+    clssname: "whatsapp",
+  },
+];
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-12">
@@ -30,46 +63,18 @@ export default function Footer() {
 
             {/* Social Media Links */}
             <div className="flex space-x-4">
-              <a
-                href="https://linkedin.com/company/marketingtusk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-icon linkedin text-gray-400 hover:text-white transition-colors"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a
-                href="https://twitter.com/marketingtusk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-icon twitter text-gray-400 hover:text-white transition-colors"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a
-                href="https://instagram.com/marketingtusk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-icon instagram text-gray-400 hover:text-white transition-colors"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="https://facebook.com/marketingtusk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-icon facebook text-gray-400 hover:text-white transition-colors"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href="https://wa.me/917011170693"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-icon whatsapp text-gray-400 hover:text-white transition-colors"
-              >
-                <MessageCircle className="h-5 w-5" />
-              </a>
+              {socialLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`social-icon ${link.clssname} text-gray-400 hover:text-white transition-colors`}
+                  aria-label={link.name}
+                >
+                  <link.icon className="h-5 w-5" />
+                </a>
+              ))}
             </div>
           </div>
 

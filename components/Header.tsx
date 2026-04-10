@@ -87,7 +87,7 @@ export default function Header() {
         {/* Action Button & Mobile Menu Toggle */}
         <div className="flex items-center space-x-4">
           <Link href="/contact" className="hidden md:block">
-            <Button className="bg-primary-blue hover:bg-primary-blue-dark transform hover:scale-105 transition-all shadow-md">
+            <Button className="bg-[#0060d1] hover:bg-primary-blue-dark transform hover:scale-105 transition-all shadow-md">
               Get Started
             </Button>
           </Link>
