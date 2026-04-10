@@ -32,9 +32,22 @@ export default function AppPagination({
     return `${pathname}?${params.toString()}`;
   }
 
-  function handlePageChange(e: React.MouseEvent, page: number) {
+  function handlePageChange(
+    e: React.MouseEvent<HTMLAnchorElement>,
+    page: number,
+  ) {
+    if (
+      e.defaultPrevented ||
+      e.button !== 0 ||
+      e.metaKey ||
+      e.ctrlKey ||
+      e.shiftKey ||
+      e.altKey
+    ) {
+      return;
+    }
     e.preventDefault();
-    router.replace(buildHref(page), { scroll: false });
+    router.push(buildHref(page), { scroll: false });
   }
 
   // Build a windowed list of pages to show (always show first, last, and
@@ -65,7 +78,9 @@ export default function AppPagination({
         <PaginationItem>
           <PaginationPrevious
             href={currentPage > 1 ? buildHref(currentPage - 1) : undefined}
-            onClick={(e) => currentPage > 1 && handlePageChange(e, currentPage - 1)}
+            onClick={(e) =>
+              currentPage > 1 && handlePageChange(e, currentPage - 1)
+            }
             aria-disabled={currentPage === 1}
             className={
               currentPage === 1
@@ -96,18 +111,18 @@ export default function AppPagination({
                 {page}
               </PaginationLink>
             </PaginationItem>
-          )
+          ),
         )}
 
         {/* Next */}
         <PaginationItem>
           <PaginationNext
             href={
-              currentPage < totalPages
-                ? buildHref(currentPage + 1)
-                : undefined
+              currentPage < totalPages ? buildHref(currentPage + 1) : undefined
             }
-            onClick={(e) => currentPage < totalPages && handlePageChange(e, currentPage + 1)}
+            onClick={(e) =>
+              currentPage < totalPages && handlePageChange(e, currentPage + 1)
+            }
             aria-disabled={currentPage === totalPages}
             className={
               currentPage === totalPages

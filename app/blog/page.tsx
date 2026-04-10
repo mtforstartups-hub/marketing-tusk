@@ -25,7 +25,7 @@ export default async function BlogPage(props: {
   const category = searchParams?.category || "";
   const query = searchParams?.search || "";
   const rawPage = Number.parseInt(searchParams?.page ?? "1", 10);
-  const currentPage = rawPage > 0 ? rawPage : 1;
+  const requestedPage = rawPage > 0 ? rawPage : 1;
 
   const [{ data: categories }, totalCount] = await Promise.all([
     sanityFetch({ query: CATEGORIES_QUERY }),
@@ -34,6 +34,7 @@ export default async function BlogPage(props: {
 
   const categoryList: string[] = categories ?? [];
   const totalPages = Math.ceil((totalCount ?? 0) / POSTS_PER_PAGE);
+  const currentPage = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
 
   const hasFilters = !!(query || category);
 
