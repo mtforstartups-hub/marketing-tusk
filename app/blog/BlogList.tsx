@@ -22,18 +22,22 @@ type Post = {
   body: any | null;
 };
 
-const getExcerpt = (blocks: any[]) => {
+const getAllText = (blocks: any[]) => {
   if (!blocks) return "";
-  const text = blocks
+  return blocks
     .filter((block) => block._type === "block" && block.children)
     .map((block) => block.children.map((child: any) => child.text).join(""))
     .join(" ");
+};
+
+const getExcerpt = (blocks: any[]) => {
+  const text = getAllText(blocks);
   return text.length > 150 ? text.substring(0, 150) + "..." : text;
 };
 
 const getReadTime = (blocks: any[]) => {
-  const text = getExcerpt(blocks);
-  const words = text.split(/\s+/).length;
+  const text = getAllText(blocks);
+  const words = text.split(/\s+/).filter(word => word.length > 0).length;
   const minutes = Math.ceil(words / 200) || 1;
   return `${minutes} min read`;
 };
