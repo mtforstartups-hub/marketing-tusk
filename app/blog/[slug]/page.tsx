@@ -39,16 +39,21 @@ export async function generateMetadata({
 
   // Prefer the hand-crafted meta description from the Studio.
   // Fall back to extracting the first ~155 chars from body text for older posts.
+
+  const fallbackText = post.body
+    ? post.body
+        .filter((block: any) => block._type === "block" && block.children)
+        .map((block: any) =>
+          block.children.map((child: any) => child.text).join(""),
+        )
+        .join(" ")
+        .trim()
+    : "";
+
   const description =
     post.metaDescription?.trim() ||
-    (post.body
-      ? post.body
-          .filter((block: any) => block._type === "block" && block.children)
-          .map((block: any) =>
-            block.children.map((child: any) => child.text).join(""),
-          )
-          .join(" ")
-          .substring(0, 155) + "…"
+    (fallbackText
+      ? `${fallbackText.substring(0, 155)}…`
       : "Read this insightful article from Marketing Tusk.");
 
   return {

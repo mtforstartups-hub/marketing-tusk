@@ -126,12 +126,16 @@ export function MetaDescriptionInput(props: StringInputProps) {
     if (bodyText) {
       // Try to grab the first sentence
       const firstSentence = bodyText.split(/[.!?]/)[0]?.trim();
-      const connector = firstSentence ? ` — ${firstSentence}` : ` — ${bodyText}`;
-      const combined = draft + connector;
-      draft = combined.length <= SWEET_SPOT ? combined : combined.substring(0, SWEET_SPOT - 1) + "…";
+      const payload = firstSentence || bodyText;
+      const combined = draft ? `${draft} — ${payload}` : payload;
+      draft =
+        combined.length <= SWEET_SPOT
+          ? combined
+          : combined.substring(0, SWEET_SPOT - 1) + "…";
     } else if (draft.length < SWEET_SPOT) {
       draft = draft + " — Read more on Marketing Tusk.";
-      if (draft.length > SWEET_SPOT) draft = draft.substring(0, SWEET_SPOT - 1) + "…";
+      if (draft.length > SWEET_SPOT)
+        draft = draft.substring(0, SWEET_SPOT - 1) + "…";
     }
 
     onChange(draft ? set(draft) : unset());
@@ -198,11 +202,13 @@ export function MetaDescriptionInput(props: StringInputProps) {
           }}
           onMouseEnter={(e) => {
             if (title || body)
-              (e.currentTarget as HTMLButtonElement).style.background = "#1e3a5f";
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "#1e3a5f";
           }}
           onMouseLeave={(e) => {
             if (title || body)
-              (e.currentTarget as HTMLButtonElement).style.background = "#0f172a";
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "#0f172a";
           }}
         >
           ✨ Generate
@@ -320,19 +326,23 @@ export function MetaDescriptionInput(props: StringInputProps) {
           }}
         >
           <li>
-            <strong>120–160 chars</strong> — optimal length; 155 is the sweet spot
+            <strong>120–160 chars</strong> — optimal length; 155 is the sweet
+            spot
           </li>
           <li>
             <strong>&gt; 170 chars</strong> — likely truncated by Google
           </li>
           <li>
-            <strong>Include your target keyword</strong> early in the description
+            <strong>Include your target keyword</strong> early in the
+            description
           </li>
           <li>
-            <strong>Add a CTA</strong> — "Learn how", "Get the guide", "Read more"…
+            <strong>Add a CTA</strong> — "Learn how", "Get the guide", "Read
+            more"…
           </li>
           <li>
-            <strong>Be unique</strong> — every post needs its own distinct description
+            <strong>Be unique</strong> — every post needs its own distinct
+            description
           </li>
         </ul>
       </details>
