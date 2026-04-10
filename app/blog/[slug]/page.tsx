@@ -51,7 +51,6 @@ export async function generateMetadata({
           .substring(0, 155) + "…"
       : "Read this insightful article from Marketing Tusk.");
 
-
   return {
     title: `${post.title} | Marketing Tusk Insights`,
     description,
@@ -309,15 +308,13 @@ export default async function BlogPostPage({
                     <Badge
                       variant="secondary"
                       key={index}
-                      className="bg-muted hover:bg-muted text-muted-foreground"
+                      className="bg-muted hover:bg-muted text-[#3a4558]"
                     >
                       {cat}
                     </Badge>
                   ))}
                   {(!post.tags || post.tags.length === 0) && (
-                    <span className="text-muted-foreground text-sm">
-                      No tags
-                    </span>
+                    <span className="text-[#3a4558] text-sm">No tags</span>
                   )}
                 </div>
               </div>
@@ -348,7 +345,7 @@ export default async function BlogPostPage({
                     <h3 className="text-xl font-bold text-foreground mb-1">
                       {post.author}
                     </h3>
-                    <p className="text-sm text-primary-blue font-medium mb-4">
+                    <p className="text-sm text-[#0060d1] font-medium mb-4">
                       Content Contributor
                     </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
