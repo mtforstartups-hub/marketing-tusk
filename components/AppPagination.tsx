@@ -9,19 +9,20 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-interface BlogPaginationProps {
+interface AppPaginationProps {
   totalPages: number;
   currentPage: number;
 }
 
-export default function BlogPagination({
+export default function AppPagination({
   totalPages,
   currentPage,
-}: BlogPaginationProps) {
+}: AppPaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   if (totalPages <= 1) return null;
 
@@ -29,6 +30,11 @@ export default function BlogPagination({
     const params = new URLSearchParams(searchParams);
     params.set("page", String(page));
     return `${pathname}?${params.toString()}`;
+  }
+
+  function handlePageChange(e: React.MouseEvent, page: number) {
+    e.preventDefault();
+    router.replace(buildHref(page), { scroll: false });
   }
 
   // Build a windowed list of pages to show (always show first, last, and
@@ -59,11 +65,12 @@ export default function BlogPagination({
         <PaginationItem>
           <PaginationPrevious
             href={currentPage > 1 ? buildHref(currentPage - 1) : undefined}
+            onClick={(e) => currentPage > 1 && handlePageChange(e, currentPage - 1)}
             aria-disabled={currentPage === 1}
             className={
               currentPage === 1
                 ? "pointer-events-none opacity-40"
-                : "hover:text-primary-blue hover:border-primary-blue transition-colors"
+                : "hover:text-primary-blue hover:border-primary-blue transition-colors cursor-pointer"
             }
           />
         </PaginationItem>
@@ -78,11 +85,12 @@ export default function BlogPagination({
             <PaginationItem key={page}>
               <PaginationLink
                 href={buildHref(page)}
+                onClick={(e) => handlePageChange(e, page)}
                 isActive={page === currentPage}
                 className={
                   page === currentPage
-                    ? "bg-primary-blue text-white border-primary-blue hover:bg-primary-blue hover:text-white"
-                    : "hover:text-primary-blue hover:border-primary-blue transition-colors"
+                    ? "bg-primary-blue text-white border-primary-blue hover:bg-primary-blue hover:text-white cursor-pointer"
+                    : "hover:text-primary-blue hover:border-primary-blue transition-colors cursor-pointer"
                 }
               >
                 {page}
@@ -99,11 +107,12 @@ export default function BlogPagination({
                 ? buildHref(currentPage + 1)
                 : undefined
             }
+            onClick={(e) => currentPage < totalPages && handlePageChange(e, currentPage + 1)}
             aria-disabled={currentPage === totalPages}
             className={
               currentPage === totalPages
                 ? "pointer-events-none opacity-40"
-                : "hover:text-primary-blue hover:border-primary-blue transition-colors"
+                : "hover:text-primary-blue hover:border-primary-blue transition-colors cursor-pointer"
             }
           />
         </PaginationItem>
