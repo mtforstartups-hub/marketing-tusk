@@ -3,12 +3,14 @@ import BlogPostSearch from "./BlogPostSearch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Suspense } from "react";
-import BlogList from "./BlogList";
+import BlogList, { POSTS_PER_PAGE } from "./BlogList";
 import BlogListSkeleton from "./BlogListSkeleton";
 import CategorySelect from "./CategorySelect";
 import { sanityFetch } from "@/sanity/lib/live";
 import { CATEGORIES_QUERY } from "@/sanity/lib/queries";
 import Link from "next/link";
+import AppPagination from "@/components/AppPagination";
+import { getPostsCount } from "@/sanity/lib/data";
 
 export const revalidate = 60;
 
@@ -23,10 +25,16 @@ export default async function BlogPage(props: {
   const category = searchParams?.category || "";
   const query = searchParams?.search || "";
   const rawPage = Number.parseInt(searchParams?.page ?? "1", 10);
-  const currentPage = rawPage > 0 ? rawPage : 1;
+  const requestedPage = rawPage > 0 ? rawPage : 1;
 
-  const { data: categories } = await sanityFetch({ query: CATEGORIES_QUERY });
+  const [{ data: categories }, totalCount] = await Promise.all([
+    sanityFetch({ query: CATEGORIES_QUERY }),
+    getPostsCount(category, query),
+  ]);
+
   const categoryList: string[] = categories ?? [];
+  const totalPages = Math.ceil((totalCount ?? 0) / POSTS_PER_PAGE);
+  const currentPage = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
 
   const hasFilters = !!(query || category);
 
@@ -104,6 +112,8 @@ export default async function BlogPage(props: {
               currentPage={currentPage}
             />
           </Suspense>
+
+          <AppPagination totalPages={totalPages} currentPage={currentPage} />
         </div>
       </section>
 
