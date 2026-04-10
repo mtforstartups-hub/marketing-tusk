@@ -11,6 +11,14 @@ import {
   Globe,
   Share2,
   Palette,
+  User,
+  Mail,
+  FileText,
+  BarChart,
+  Mic,
+  MapPin,
+  Newspaper,
+  Megaphone,
   Network,
   Menu,
   X,
@@ -30,66 +38,225 @@ import Link from "next/link"
 export default function ServicesPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const services = [
+  const services: {
+    icon: any;
+    title: string;
+    description: string;
+    features: string[];
+    duration?: string;
+    engagementModel?: string;
+    category: string;
+  }[] = [
     {
       icon: PresentationChart,
       title: "Pitch Deck Design",
-      description: "Compelling decks that drive investment and resonate with your target audience",
+      description:
+        "Professional, investor-ready pitch decks and business presentations designed to communicate your story clearly, persuasively, and visually",
       features: [
-        "Professional slide design",
-        "Compelling storytelling",
-        "Investor-focused content",
-        "Multiple revisions included",
+        "Investor pitch decks",
+        "Sales presentations",
+        "Storytelling & content structuring",
+        "Visual design & branding alignment",
       ],
-      duration: "5-7 days",
+      duration: "3-7 days",
       category: "Design",
     },
     {
       icon: Globe,
       title: "Website Development",
-      description: "Modern, user-friendly designs that create captivating online presence",
-      features: ["Responsive web design", "SEO optimization", "Content management system", "Mobile-first approach"],
-      duration: "2-3 weeks",
+      description:
+        "Modern, fast, and conversion-optimized websites built to enhance your digital presence and drive business growth.",
+      features: [
+        "UI/UX design",
+        "Responsive development",
+        "Landing pages",
+        "Speed optimization",
+        "Conversion-focused structure",
+      ],
+      duration: "10-20 Days",
       category: "Development",
     },
     {
       icon: Share2,
       title: "Social Media Marketing",
-      description: "Strategic brand engagement and audience building across platforms",
+      description:
+        "Strategic social media campaigns and creative content that build brand awareness, engagement, and audience growth.",
       features: [
-        "Content strategy & creation",
-        "Multi-platform management",
-        "Analytics & reporting",
-        "Community engagement",
+        "Content calendar planning",
+        "Creative post design",
+        "Platform management",
+        "Engagement strategy",
+        "Performance tracking",
       ],
-      duration: "Ongoing",
+      engagementModel: "Monthly Retainer",
       category: "Marketing",
     },
     {
       icon: Palette,
       title: "Branding Services",
-      description: "Complete brand identity solutions that establish strong market presence",
-      features: ["Logo & visual identity", "Brand guidelines", "Marketing collaterals", "Brand strategy consultation"],
-      duration: "1-2 weeks",
+      description:
+        "Complete brand identity systems that help your business stand out and create a lasting impression in the market.",
+      features: [
+        "Logo design",
+        "Brand guidelines",
+        "Color & typography system",
+        "Visual identity creation",
+        "Brand positioning",
+      ],
+      duration: "7-14 Days",
       category: "Design",
     },
     {
+      icon: User,
+      title: "Personal Branding",
+      description:
+        "Position founders and professionals as industry leaders through strategic content, visibility, and authority building.",
+      features: [
+        "LinkedIn growth strategy",
+        "Content creation",
+        "Thought leadership positioning",
+        "Profile optimization",
+        "Audience building",
+      ],
+      engagementModel: "Monthly Retainer",
+      category: "Marketing",
+    },
+    {
+      icon: Mail,
+      title: "Email & WhatsApp Marketing",
+      description:
+        "Targeted campaigns that nurture leads, improve retention, and drive conversions through direct communication channels.",
+      features: [
+        "Campaign strategy",
+        "Automation setup",
+        "Funnel creation",
+        "Broadcast campaigns",
+        "Conversion tracking",
+      ],
+      engagementModel: "5-10 Days Setup + Monthly",
+      category: "Marketing",
+    },
+    {
+      icon: FileText,
+      title: "Content Marketing",
+      description:
+        "High-quality, SEO-driven content that builds authority, attracts the right audience, and supports long-term growth.",
+      features: [
+        "Blog writing",
+        "SEO content strategy",
+        "Website content",
+        "Copywriting",
+        "Content distribution",
+      ],
+      engagementModel: "Monthly Retainer",
+      category: "Marketing",
+    },
+    {
+      icon: BarChart,
+      title: "Reports Designing",
+      description:
+        "Visually engaging and professional reports for data presentation, insights, and corporate communication.",
+      features: [
+        "Business reports",
+        "Annual reports",
+        "Data visualization",
+        "Infographics",
+        "Clean layouts",
+      ],
+      duration: "3-6 Days",
+      category: "Design",
+    },
+    {
+      icon: Mic,
+      title: "Event Marketing",
+      description:
+        "End-to-end marketing and branding support for webinars, conferences, and events to maximize reach and engagement.",
+      features: [
+        "Event promotion strategy",
+        "Landing pages",
+        "Social campaigns",
+        "Branding assets",
+        "Audience engagement",
+      ],
+      engagementModel: "Campaign-Based",
+      category: "Marketing",
+    },
+    {
+      icon: MapPin,
+      title: "OOH & DOOH Campaigns",
+      description:
+        "Outdoor and digital advertising campaigns designed to boost large-scale visibility and brand recall.",
+      features: [
+        "Billboard advertising",
+        "Digital screens (DOOH)",
+        "Location targeting",
+        "Creative design",
+        "Campaign execution",
+      ],
+      engagementModel: "Campaign-Based",
+      category: "Advertising",
+    },
+    {
+      icon: Newspaper,
+      title: "Media & Press Release",
+      description:
+        "PR and media outreach services that enhance brand credibility and secure high-impact media coverage.",
+      features: [
+        "Press release writing",
+        "Media outreach",
+        "Publication placements",
+        "Brand storytelling",
+        "PR strategy",
+      ],
+      duration: "5-10 Days",
+      category: "Advertising",
+    },
+    {
+      icon: Megaphone,
+      title: "Digital Advertising",
+      description:
+        "ROI-driven digital advertising campaigns across Google, Meta, and LinkedIn to generate leads and drive sales.",
+      features: [
+        "Google Ads",
+        "Meta Ads (Facebook/Instagram)",
+        "LinkedIn Ads",
+        "Funnel optimization",
+        "Performance tracking",
+      ],
+      engagementModel: "Monthly Retainer",
+      category: "Advertising",
+    },
+
+    // existing networking services
+    {
       icon: Users,
       title: "Investor Outreach",
-      description: "Strategic connections with the right investors for your startup journey",
-      features: ["Investor database access", "Personalized outreach", "Meeting coordination", "Follow-up management"],
+      description:
+        "Strategic connections with the right investors for your startup journey",
+      features: [
+        "Investor database access",
+        "Personalized outreach",
+        "Meeting coordination",
+        "Follow-up management",
+      ],
       duration: "4-6 weeks",
       category: "Networking",
     },
     {
       icon: Network,
       title: "Ecosystem Enablement",
-      description: "Access to accelerators, mentors, and industry experts across India",
-      features: ["Accelerator applications", "Mentor connections", "Industry introductions", "Program recommendations"],
+      description:
+        "Access to accelerators, mentors, and industry experts across India",
+      features: [
+        "Accelerator applications",
+        "Mentor connections",
+        "Industry introductions",
+        "Program recommendations",
+      ],
       duration: "3-4 weeks",
       category: "Networking",
     },
-  ]
+  ];
 
   const testimonials = [
     {
@@ -196,20 +363,31 @@ export default function ServicesPage() {
                   </div>
 
                   <div className="border-t pt-4 space-y-2">
-                   {/*} <div className="flex items-center justify-between">
+                    {/*} <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                         <Target className="h-4 w-4 text-primary-blue" />
                         <span className="text-sm font-medium text-foreground">Price</span>
                       </div>
                       <span className="text-sm font-semibold text-primary-blue">{service.price}</span>
                     </div>*/}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-primary-blue" />
-                        <span className="text-sm m-3 font-medium text-foreground">Timeline</span>
+                    {service.duration && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="h-4 w-4 text-primary-blue" />
+                          <span className="text-sm m-3 font-medium text-foreground">Timeline</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{service.duration}</span>
                       </div>
-                      <span className="text-sm text-muted-foreground">{service.duration}</span>
-                    </div>
+                    )}
+                    {service.engagementModel && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Target className="h-4 w-4 text-primary-blue" />
+                          <span className="text-sm m-3 font-medium text-foreground">Engagement Model</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{service.engagementModel}</span>
+                      </div>
+                    )}
                   </div>
 
                   <Link href="/contact">
