@@ -227,7 +227,7 @@ export default async function BlogPostPage({
               {post.categories?.map((category: string) => (
                 <Badge
                   key={category}
-                  className="bg-primary-blue hover:bg-primary-blue-dark text-white border-transparent px-3 py-1 shadow-md"
+                  className="bg-[#0060d1] hover:bg-primary-blue-dark text-white border-transparent px-3 py-1 shadow-md"
                 >
                   {category}
                 </Badge>
@@ -380,7 +380,7 @@ export default async function BlogPostPage({
                     placeholder="Work email address"
                     className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:ring-1 focus-visible:ring-white h-11"
                   />
-                  <Button className="w-full bg-white text-primary-blue hover:bg-gray-50 h-11 font-semibold">
+                  <Button className="w-full bg-white text-[#0060d1] hover:bg-gray-50 h-11 font-semibold">
                     Subscribe
                   </Button>
                 </div>
