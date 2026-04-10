@@ -37,15 +37,24 @@ export async function generateMetadata({
     ? post.mainImage
     : `${siteUrl}/placeholder.jpg`;
 
-  const description = post.body
+  // Prefer the hand-crafted meta description from the Studio.
+  // Fall back to extracting the first ~155 chars from body text for older posts.
+
+  const fallbackText = post.body
     ? post.body
         .filter((block: any) => block._type === "block" && block.children)
         .map((block: any) =>
           block.children.map((child: any) => child.text).join(""),
         )
         .join(" ")
-        .substring(0, 160) + "..."
-    : "Read this insightful article from Marketing Tusk.";
+        .trim()
+    : "";
+
+  const description =
+    post.metaDescription?.trim() ||
+    (fallbackText
+      ? `${fallbackText.substring(0, 155)}…`
+      : "Read this insightful article from Marketing Tusk.");
 
   return {
     title: `${post.title} | Marketing Tusk Insights`,
@@ -223,7 +232,7 @@ export default async function BlogPostPage({
               {post.categories?.map((category: string) => (
                 <Badge
                   key={category}
-                  className="bg-primary-blue hover:bg-primary-blue-dark text-white border-transparent px-3 py-1 shadow-md"
+                  className="bg-[#0060d1] hover:bg-primary-blue-dark text-white border-transparent px-3 py-1 shadow-md"
                 >
                   {category}
                 </Badge>
@@ -304,15 +313,13 @@ export default async function BlogPostPage({
                     <Badge
                       variant="secondary"
                       key={index}
-                      className="bg-muted hover:bg-muted text-muted-foreground"
+                      className="bg-muted hover:bg-muted text-[#3a4558]"
                     >
                       {cat}
                     </Badge>
                   ))}
                   {(!post.tags || post.tags.length === 0) && (
-                    <span className="text-muted-foreground text-sm">
-                      No tags
-                    </span>
+                    <span className="text-[#3a4558] text-sm">No tags</span>
                   )}
                 </div>
               </div>
@@ -343,7 +350,7 @@ export default async function BlogPostPage({
                     <h3 className="text-xl font-bold text-foreground mb-1">
                       {post.author}
                     </h3>
-                    <p className="text-sm text-primary-blue font-medium mb-4">
+                    <p className="text-sm text-[#0060d1] font-medium mb-4">
                       Content Contributor
                     </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
@@ -378,7 +385,7 @@ export default async function BlogPostPage({
                     placeholder="Work email address"
                     className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:ring-1 focus-visible:ring-white h-11"
                   />
-                  <Button className="w-full bg-white text-primary-blue hover:bg-gray-50 h-11 font-semibold">
+                  <Button className="w-full bg-white text-[#0060d1] hover:bg-gray-50 h-11 font-semibold">
                     Subscribe
                   </Button>
                 </div>

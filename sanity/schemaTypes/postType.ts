@@ -1,5 +1,6 @@
 import { DocumentTextIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { MetaDescriptionInput } from "../components/MetaDescriptionInput";
 
 export const postType = defineType({
   name: "post",
@@ -59,6 +60,20 @@ export const postType = defineType({
     defineField({
       name: "publishedAt",
       type: "datetime",
+    }),
+    defineField({
+      name: "metaDescription",
+      title: "Meta Description",
+      type: "string",
+      description:
+        "SEO description shown in Google search results. Aim for 120–160 characters (155 is ideal). Descriptions over 170 chars will be cut off.",
+      components: {
+        input: MetaDescriptionInput,
+      },
+      validation: (Rule) =>
+        Rule.max(170).warning(
+          "This description is over 170 characters and will very likely be truncated by Google.",
+        ),
     }),
     defineField({
       name: "body",
