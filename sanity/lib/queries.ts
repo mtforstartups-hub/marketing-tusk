@@ -56,6 +56,7 @@ export const POST_BY_SLUG_QUERY =
   _id,
   title,
   "slug": slug.current,
+  metaDescription,
   "author": author->name,
   "authorImage": author->image.asset->url,
   "mainImage": mainImage.asset->url,
