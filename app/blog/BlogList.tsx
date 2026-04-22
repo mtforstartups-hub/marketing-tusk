@@ -30,14 +30,14 @@ const getAllText = (blocks: any[]) => {
     .join(" ");
 };
 
-const getExcerpt = (blocks: any[]) => {
+export const getExcerpt = (blocks: any[]) => {
   const text = getAllText(blocks);
   return text.length > 150 ? text.substring(0, 150) + "..." : text;
 };
 
-const getReadTime = (blocks: any[]) => {
+export const getReadTime = (blocks: any[]) => {
   const text = getAllText(blocks);
-  const words = text.split(/\s+/).filter(word => word.length > 0).length;
+  const words = text.split(/\s+/).filter((word) => word.length > 0).length;
   const minutes = Math.ceil(words / 200) || 1;
   return `${minutes} min read`;
 };
@@ -113,7 +113,9 @@ export default async function BlogList({
                 {post.author && (
                   <div className="flex items-center gap-1 font-medium">
                     <User className="h-3.5 w-3.5 shrink-0" />
-                    <span className="truncate max-w-[120px]">{post.author}</span>
+                    <span className="truncate max-w-[120px]">
+                      {post.author}
+                    </span>
                   </div>
                 )}
                 {post.publishedAt && (

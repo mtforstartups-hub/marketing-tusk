@@ -17,8 +17,16 @@ import {
 
 import Partners from "@/components/homepage/Partners";
 import Services from "@/components/homepage/Services";
+import { sanityFetch } from "@/sanity/lib/live";
+import { POSTS_QUERY_FILTERED } from "@/sanity/lib/queries";
+import { getExcerpt, getReadTime } from "./blog/BlogList";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { data: posts } = await sanityFetch({
+    query: POSTS_QUERY_FILTERED,
+    params: { category: "", search: "", start: 0, end: 3 },
+  });
+
   return (
     <>
       {/* Header */}
@@ -157,68 +165,57 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {[
-              {
-                title: "10 Essential Elements of a Winning Pitch Deck",
-                excerpt:
-                  "Learn what investors look for in pitch decks and how to craft compelling narratives that secure funding.",
-                date: "Jan 15, 2025",
-                readTime: "5 min read",
-                category: "Fundraising",
-                image: "/placeholder.svg?height=200&width=400",
-              },
-              {
-                title: "Building Your Startup Brand: A Complete Guide",
-                excerpt:
-                  "From logo design to brand voice, discover how to create a memorable brand identity that resonates with your audience.",
-                date: "Jan 12, 2025",
-                readTime: "7 min read",
-                category: "Branding",
-                image: "/placeholder.svg?height=200&width=400",
-              },
-              {
-                title: "Top 15 Accelerators in India for Early-Stage Startups",
-                excerpt:
-                  "A comprehensive guide to the best accelerator programs in India and how to increase your chances of acceptance.",
-                date: "Jan 10, 2025",
-                readTime: "10 min read",
-                category: "Ecosystem",
-                image: "/placeholder.svg?height=200&width=400",
-              },
-            ].map((post, index) => (
-              <Card
-                key={index}
-                className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in-50 slide-in-from-bottom-6 delay-${index * 150}`}
-              >
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <Image
-                    src={post.image || "/placeholder.svg"}
-                    alt={post.title}
-                    className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
-                    width={500}
-                    height={500}
-                  />
-                  <Badge className="absolute top-4 left-4 bg-primary-blue hover:bg-primary-blue">
-                    {post.category}
-                  </Badge>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-lg hover:text-primary-blue transition-colors line-clamp-2 text-foreground">
-                    {post.title}
-                  </CardTitle>
-                  <div className="flex items-center text-sm text-muted-foreground space-x-4">
-                    <span>{post.date}</span>
-                    <span>•</span>
-                    <span>{post.readTime}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+            {posts.length >= 0 &&
+              posts.map((post: any, index: number) => (
+                <Link key={post._id} href={`/blog/${post.slug}`}>
+                  <Card
+                    key={index}
+                    className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in-50 slide-in-from-bottom-6 delay-${index * 150}`}
+                  >
+                    <div className="relative overflow-hidden rounded-t-lg">
+                      <Image
+                        src={post.mainImage || "/placeholder.svg"}
+                        alt={post.title}
+                        className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                        width={500}
+                        height={500}
+                      />
+                      {post.categories?.[0] && (
+                        <Badge className="absolute top-4 left-4 bg-primary-blue hover:bg-primary-blue">
+                          {post.categories[0]}
+                        </Badge>
+                      )}
+                    </div>
+                    <CardHeader>
+                      <CardTitle className="text-lg hover:text-primary-blue transition-colors line-clamp-2 text-foreground">
+                        {post.title}
+                      </CardTitle>
+                      <div className="flex items-center text-sm text-muted-foreground space-x-4">
+                        {post.publishedAt && (
+                          <span>
+                            {new Date(post.publishedAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
+                          </span>
+                        )}
+
+                        <span>•</span>
+                        <span>{getReadTime(post.body)}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground line-clamp-3">
+                        {getExcerpt(post.body)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
           </div>
 
           <div className="text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-700 delay-500">

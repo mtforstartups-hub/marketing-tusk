@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import whatsapp from "@/public/images/whatsapp.svg";
+import CurrentYear from "./CurrentYear";
 
 export default function Footer() {
   return (
@@ -130,7 +131,9 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2025 Marketing Tusk. All rights reserved.</p>
+          <p>
+            &copy; <CurrentYear /> Marketing Tusk. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
