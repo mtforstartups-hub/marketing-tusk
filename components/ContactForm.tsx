@@ -343,7 +343,7 @@ export default function ContactForm() {
           </>
         ) : (
           <>
-            Send Message
+            Get Started
             <ArrowRight className="ml-2 h-5 w-5" />
           </>
         )}
