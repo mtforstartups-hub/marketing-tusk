@@ -1,13 +1,13 @@
-import { PortableText } from "@portabletext/react";
+import PortableTextRenderer from "./PortableTextRenderer";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import SanityImage from "@/components/SanityImage";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Calendar, User, Clock, Mail } from "lucide-react";
-import { urlFor } from "@/sanity/lib/image";
 import ShareButtons from "@/components/ShareButtons";
 
 import { Metadata } from "next";
@@ -78,91 +78,7 @@ export async function generateMetadata({
   };
 }
 
-const portableTextComponents = {
-  types: {
-    image: ({ value }: any) => {
-      if (!value?.asset?._ref) return null;
-      return (
-        <figure className="my-10 mx-auto rounded-xl overflow-hidden shadow-sm border border-border/60 bg-white">
-          <Image
-            src={urlFor(value).url()}
-            alt={value.alt || "Blog content image"}
-            width={800}
-            height={500}
-            className="w-full h-auto object-cover"
-          />
-          {value.caption && (
-            <figcaption className="p-3 bg-muted/30 text-center border-t border-border/30">
-              <span className="text-sm text-muted-foreground italic font-medium">
-                {value.caption}
-              </span>
-            </figcaption>
-          )}
-        </figure>
-      );
-    },
-  },
-  block: {
-    h1: ({ children }: any) => (
-      <h1 className="text-4xl md:text-5xl font-bold mt-12 mb-6 text-foreground tracking-tight">
-        {children}
-      </h1>
-    ),
-    h2: ({ children }: any) => (
-      <h2 className="text-3xl md:text-4xl font-bold mt-10 mb-5 text-foreground tracking-tight">
-        {children}
-      </h2>
-    ),
-    h3: ({ children }: any) => (
-      <h3 className="text-2xl font-bold mt-8 mb-4 text-foreground">
-        {children}
-      </h3>
-    ),
-    normal: ({ children }: any) => (
-      <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 font-light">
-        {children}
-      </p>
-    ),
-    blockquote: ({ children }: any) => (
-      <blockquote className="border-l-4 border-primary-blue bg-primary-blue/5 pl-6 py-5 pr-5 my-10 mx-0 italic text-xl md:text-2xl text-foreground font-medium rounded-r-xl shadow-sm">
-        {children}
-      </blockquote>
-    ),
-  },
-  list: {
-    bullet: ({ children }: any) => (
-      <ul className="list-disc pl-8 mb-8 space-y-3 text-lg md:text-xl text-muted-foreground">
-        {children}
-      </ul>
-    ),
-    number: ({ children }: any) => (
-      <ol className="list-decimal pl-8 mb-8 space-y-3 text-lg md:text-xl text-muted-foreground">
-        {children}
-      </ol>
-    ),
-  },
-  marks: {
-    strong: ({ children }: any) => (
-      <strong className="font-semibold text-foreground">{children}</strong>
-    ),
-    em: ({ children }: any) => <em className="italic">{children}</em>,
-    link: ({ value, children }: any) => {
-      const target = (value?.href || "").startsWith("http")
-        ? "_blank"
-        : undefined;
-      return (
-        <a
-          href={value?.href}
-          target={target}
-          rel={target === "_blank" ? "noopener noreferrer nofollow" : undefined}
-          className="text-primary-blue hover:text-primary-blue-dark hover:underline underline-offset-4 transition-colors font-medium"
-        >
-          {children}
-        </a>
-      );
-    },
-  },
-};
+
 
 export default async function BlogPostPage({
   params,
@@ -199,13 +115,23 @@ export default async function BlogPostPage({
     <article className="min-h-screen bg-background pb-24 font-sans">
       {/* Immersive Hero Section */}
       <section className="relative w-full h-[65vh] min-h-[500px] max-h-[800px] flex flex-col justify-end">
-        <Image
-          src={heroImage}
-          alt={post.title || "Blog post featured image"}
-          fill
-          className="object-cover absolute inset-0 z-0"
-          priority
-        />
+        {post.mainImage ? (
+          <SanityImage
+            src={heroImage}
+            alt={post.title || "Blog post featured image"}
+            fill
+            className="object-cover absolute inset-0 z-0"
+            priority
+          />
+        ) : (
+          <Image
+            src={heroImage}
+            alt={post.title || "Blog post featured image"}
+            fill
+            className="object-cover absolute inset-0 z-0"
+            priority
+          />
+        )}
         {/* Elegant layered gradient overlay to ensure text legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/70 to-black/20 z-10" />
 
@@ -238,7 +164,7 @@ export default async function BlogPostPage({
               {post.author && (
                 <div className="flex items-center">
                   {post.authorImage ? (
-                    <Image
+                    <SanityImage
                       src={post.authorImage}
                       alt={post.author}
                       width={48}
@@ -284,10 +210,7 @@ export default async function BlogPostPage({
           <div className="lg:col-span-8">
             <div className="prose prose-lg md:prose-xl max-w-none text-muted-foreground">
               {post.body ? (
-                <PortableText
-                  value={post.body}
-                  components={portableTextComponents}
-                />
+                <PortableTextRenderer value={post.body} />
               ) : (
                 <p className="text-xl italic pt-8">
                   This post has no content yet.
@@ -328,7 +251,7 @@ export default async function BlogPostPage({
                 <CardContent className="px-6 pb-6 pt-0 relative">
                   <div className="flex flex-col items-center -mt-8 text-center">
                     {post.authorImage ? (
-                      <Image
+                      <SanityImage
                         src={post.authorImage}
                         alt={post.author}
                         width={80}
@@ -399,15 +322,21 @@ export default async function BlogPostPage({
                       className="group flex gap-4 items-start"
                     >
                       <div className="relative w-24 h-20 rounded-md overflow-hidden flex-shrink-0 bg-muted">
-                        <Image
-                          src={
-                            relPost.mainImage ||
-                            "/placeholder.svg?height=80&width=96"
-                          }
-                          alt={relPost.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
+                        {relPost.mainImage ? (
+                          <SanityImage
+                            src={relPost.mainImage}
+                            alt={relPost.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <Image
+                            src="/placeholder.svg?height=80&width=96"
+                            alt={relPost.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        )}
                       </div>
                       <div className="flex flex-col">
                         <h4 className="text-sm font-bold text-foreground leading-snug group-hover:text-primary-blue transition-colors line-clamp-2 mb-1">

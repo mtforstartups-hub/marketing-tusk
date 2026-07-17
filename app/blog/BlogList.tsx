@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import SanityImage from "@/components/SanityImage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sanityFetch } from "@/sanity/lib/live";
 import { POSTS_QUERY_FILTERED } from "@/sanity/lib/queries";
@@ -91,13 +92,23 @@ export default async function BlogList({
         >
           <Card className="hover:shadow-2xl hover:shadow-primary-blue/10 transition-all duration-300 hover:-translate-y-2 cursor-pointer group h-full flex flex-col border-border/50 bg-white">
             <div className="relative overflow-hidden rounded-t-xl">
-              <Image
-                src={post.mainImage || "/placeholder.svg?height=200&width=400"}
-                alt={post.title || "Blog post"}
-                className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110"
-                width={500}
-                height={500}
-              />
+              {post.mainImage ? (
+                <SanityImage
+                  src={post.mainImage}
+                  alt={post.title || "Blog post"}
+                  className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110"
+                  width={500}
+                  height={500}
+                />
+              ) : (
+                <Image
+                  src="/placeholder.svg?height=200&width=400"
+                  alt={post.title || "Blog post"}
+                  className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110"
+                  width={500}
+                  height={500}
+                />
+              )}
               <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300" />
               {post.categories?.[0] && (
                 <Badge className="absolute top-4 left-4 bg-primary-blue/90 backdrop-blur-sm text-white hover:bg-primary-blue border-none shadow-sm">

@@ -14,6 +14,27 @@ import { getPostsCount } from "@/sanity/lib/data";
 
 export const revalidate = 60;
 
+async function CategorySelectWrapper() {
+  const { data: categories } = await sanityFetch({ query: CATEGORIES_QUERY });
+  const categoryList: string[] = categories ?? [];
+  return <CategorySelect categories={categoryList} />;
+}
+
+async function BlogPaginationWrapper({
+  category,
+  query,
+  requestedPage,
+}: {
+  category: string;
+  query: string;
+  requestedPage: number;
+}) {
+  const totalCount = await getPostsCount(category, query);
+  const totalPages = Math.ceil((totalCount ?? 0) / POSTS_PER_PAGE);
+  const currentPage = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
+  return <AppPagination totalPages={totalPages} currentPage={currentPage} />;
+}
+
 export default async function BlogPage(props: {
   searchParams?: Promise<{
     category?: string;
@@ -26,15 +47,6 @@ export default async function BlogPage(props: {
   const query = searchParams?.search || "";
   const rawPage = Number.parseInt(searchParams?.page ?? "1", 10);
   const requestedPage = rawPage > 0 ? rawPage : 1;
-
-  const [{ data: categories }, totalCount] = await Promise.all([
-    sanityFetch({ query: CATEGORIES_QUERY }),
-    getPostsCount(category, query),
-  ]);
-
-  const categoryList: string[] = categories ?? [];
-  const totalPages = Math.ceil((totalCount ?? 0) / POSTS_PER_PAGE);
-  const currentPage = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
 
   const hasFilters = !!(query || category);
 
@@ -68,7 +80,13 @@ export default async function BlogPage(props: {
 
             {/* Category dropdown — fixed width on desktop */}
             <div className="sm:w-auto">
-              <CategorySelect categories={categoryList} />
+              <Suspense
+                fallback={
+                  <div className="h-10 w-full sm:w-52 bg-muted/50 animate-pulse rounded-md" />
+                }
+              >
+                <CategorySelectWrapper />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -103,17 +121,26 @@ export default async function BlogPage(props: {
 
           {/* Suspense streams the blog list while sanity fetches */}
           <Suspense
-            key={`${category}-${query}-${currentPage}`}
+            key={`${category}-${query}-${requestedPage}`}
             fallback={<BlogListSkeleton />}
           >
             <BlogList
               category={category}
               search={query}
-              currentPage={currentPage}
+              currentPage={requestedPage}
             />
           </Suspense>
 
-          <AppPagination totalPages={totalPages} currentPage={currentPage} />
+          <Suspense
+            key={`pagination-${category}-${query}-${requestedPage}`}
+            fallback={<div className="h-10 mt-8 bg-transparent" />}
+          >
+            <BlogPaginationWrapper
+              category={category}
+              query={query}
+              requestedPage={requestedPage}
+            />
+          </Suspense>
         </div>
       </section>
 
