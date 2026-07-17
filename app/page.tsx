@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import SanityImage from "@/components/SanityImage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FAQSection from "@/components/ui/faqsection";
@@ -17,16 +18,102 @@ import {
 
 import Partners from "@/components/homepage/Partners";
 import Services from "@/components/homepage/Services";
+import { Suspense } from "react";
 import { sanityFetch } from "@/sanity/lib/live";
 import { POSTS_QUERY_FILTERED } from "@/sanity/lib/queries";
 import { getExcerpt, getReadTime } from "./blog/BlogList";
 
-export default async function HomePage() {
+async function HomeBlogPosts() {
   const { data: posts } = await sanityFetch({
     query: POSTS_QUERY_FILTERED,
     params: { category: "", search: "", start: 0, end: 3 },
   });
 
+  // if (!posts || posts.length === 0) return null;
+
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      {posts.map((post: any, index: number) => (
+        <Link key={post._id} href={`/blog/${post.slug}`}>
+          <Card
+            className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in-50 slide-in-from-bottom-6 delay-${index * 150}`}
+          >
+            <div className="relative overflow-hidden rounded-t-lg">
+              {post.mainImage ? (
+                <SanityImage
+                  src={post.mainImage}
+                  alt={post.title}
+                  className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                  width={500}
+                  height={500}
+                />
+              ) : (
+                <Image
+                  src="/placeholder.svg"
+                  alt={post.title}
+                  className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                  width={500}
+                  height={500}
+                />
+              )}
+              {post.categories?.[0] && (
+                <Badge className="absolute top-4 left-4 bg-primary-blue hover:bg-primary-blue">
+                  {post.categories[0]}
+                </Badge>
+              )}
+            </div>
+            <CardHeader>
+              <CardTitle className="text-lg hover:text-primary-blue transition-colors line-clamp-2 text-foreground">
+                {post.title}
+              </CardTitle>
+              <div className="flex items-center text-sm text-muted-foreground space-x-4">
+                {post.publishedAt && (
+                  <span>
+                    {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                )}
+                <span>•</span>
+                <span>{getReadTime(post.body)}</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground line-clamp-3">
+                {getExcerpt(post.body)}
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function HomeBlogPostsSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="rounded-xl border border-border/50 overflow-hidden animate-pulse"
+        >
+          <div className="w-full h-48 bg-muted" />
+          <div className="p-5 space-y-3">
+            <div className="h-4 bg-muted rounded w-3/4" />
+            <div className="h-4 bg-muted rounded w-1/2" />
+            <div className="h-3 bg-muted rounded w-full mt-4" />
+            <div className="h-3 bg-muted rounded w-5/6" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default async function HomePage() {
   return (
     <>
       {/* Header */}
@@ -164,59 +251,9 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {posts.length >= 0 &&
-              posts.map((post: any, index: number) => (
-                <Link key={post._id} href={`/blog/${post.slug}`}>
-                  <Card
-                    key={index}
-                    className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in-50 slide-in-from-bottom-6 delay-${index * 150}`}
-                  >
-                    <div className="relative overflow-hidden rounded-t-lg">
-                      <Image
-                        src={post.mainImage || "/placeholder.svg"}
-                        alt={post.title}
-                        className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
-                        width={500}
-                        height={500}
-                      />
-                      {post.categories?.[0] && (
-                        <Badge className="absolute top-4 left-4 bg-primary-blue hover:bg-primary-blue">
-                          {post.categories[0]}
-                        </Badge>
-                      )}
-                    </div>
-                    <CardHeader>
-                      <CardTitle className="text-lg hover:text-primary-blue transition-colors line-clamp-2 text-foreground">
-                        {post.title}
-                      </CardTitle>
-                      <div className="flex items-center text-sm text-muted-foreground space-x-4">
-                        {post.publishedAt && (
-                          <span>
-                            {new Date(post.publishedAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              },
-                            )}
-                          </span>
-                        )}
-
-                        <span>•</span>
-                        <span>{getReadTime(post.body)}</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground line-clamp-3">
-                        {getExcerpt(post.body)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-          </div>
+          <Suspense fallback={<HomeBlogPostsSkeleton />}>
+            <HomeBlogPosts />
+          </Suspense>
 
           <div className="text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-700 delay-500">
             <Link href="/blog">
