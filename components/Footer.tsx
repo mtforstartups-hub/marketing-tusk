@@ -16,10 +16,10 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <Link href="/" className="flex items-center space-x-2 mb-4 group">
+            <Link href="/" className="flex items-center space-x-2 mb-4 group" aria-label="Marketing Tusk Home">
               <Image
                 src="/images/logo-white.png"
-                alt="Footer Logo"
+                alt="Marketing Tusk"
                 width={250}
                 height={100}
               />
@@ -36,6 +36,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon linkedin text-gray-400 hover:text-white transition-colors"
+                aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
@@ -44,6 +45,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon twitter text-gray-400 hover:text-white transition-colors"
+                aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
               </a>
@@ -52,6 +54,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon instagram text-gray-400 hover:text-white transition-colors"
+                aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
               </a>
@@ -60,6 +63,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon facebook text-gray-400 hover:text-white transition-colors"
+                aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5" />
               </a>
@@ -68,6 +72,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon whatsapp text-gray-400 hover:text-white transition-colors"
+                aria-label="WhatsApp"
               >
                 <MessageCircle className="h-5 w-5" />
               </a>

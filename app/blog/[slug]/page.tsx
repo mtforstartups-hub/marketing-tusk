@@ -11,9 +11,17 @@ import { ArrowLeft, Calendar, User, Clock, Mail } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
 
 import { Metadata } from "next";
-import { getPost, getRelatedPosts } from "@/sanity/lib/data";
+import { getPost, getRelatedPosts, getAllPostSlugs } from "@/sanity/lib/data";
 
 export const revalidate = 60;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const slugs = await getAllPostSlugs();
+  return slugs.map((post: { slug: string }) => ({
+    slug: post.slug,
+  }));
+}
 
 export async function generateMetadata({
   params,
@@ -78,8 +86,6 @@ export async function generateMetadata({
   };
 }
 
-
-
 export default async function BlogPostPage({
   params,
 }: {
@@ -89,11 +95,11 @@ export default async function BlogPostPage({
 
   const post = await getPost(slug);
 
-  const relatedPosts = await getRelatedPosts(post?._id);
-
   if (!post) {
     notFound();
   }
+
+  const relatedPosts = await getRelatedPosts(post._id, post.categories ?? []);
 
   let readTime = "5 min read";
   if (post.body) {

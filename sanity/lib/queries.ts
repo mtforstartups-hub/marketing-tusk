@@ -65,11 +65,30 @@ export const POST_BY_SLUG_QUERY =
   body
 }`);
 
+// Two-stage pipeline:
+// 1. Project a percentage-based relevance score:
+//    (matching categories / total categories) × 100
+//    Uses the same `element in array` pattern as the working blog filter.
+//    `categories[@->title in $categoryTitles]` filters the references array
+//    to only those whose dereferenced title is in the parameter array.
+// 2. Order by relevance desc, then publishedAt desc.
 export const RELATED_POSTS_QUERY =
-  defineQuery(`*[_type == "post" && _id != $currentPostId] | order(publishedAt desc)[0...3] {
+  defineQuery(`*[_type == "post"
+    && _id != $currentPostId
+    && defined(slug.current)
+  ] {
     _id,
     title,
     "slug": slug.current,
     "mainImage": mainImage.asset->url,
     publishedAt,
-  }`);
+    "relevance": select(
+      count($categoryTitles) == 0 => 0,
+      count(categories) == 0 => 0,
+      count(categories[@->title in $categoryTitles]) * 100 / count(categories)
+    )
+  } | order(relevance desc, publishedAt desc)[0...3]`);
+
+export const POSTS_SLUGS_QUERY = defineQuery(
+  `*[_type == "post" && defined(slug.current)] { "slug": slug.current }`
+);
