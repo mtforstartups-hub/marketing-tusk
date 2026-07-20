@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
+import React, { useActionState, useState, useEffect } from "react";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,12 @@ export default function ContactForm() {
     submitContactForm,
     initialState,
   );
+
+  useEffect(() => {
+    if (state.success) {
+      sendGTMEvent({ event: "contact_form_submit", role: selectedRole });
+    }
+  }, [state.success, selectedRole]);
 
   const renderRoleSpecificFields = () => {
     switch (selectedRole) {
