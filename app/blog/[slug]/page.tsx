@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Calendar, User, Clock, Mail } from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, Mail, Twitter, Linkedin, Github, Globe } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
 
 import { Metadata } from "next";
@@ -275,10 +275,35 @@ export default async function BlogPostPage({
                     <p className="text-sm text-primary-blue font-medium mb-4">
                       Content Contributor
                     </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                       Bringing you the latest insights, strategies, and
                       deep-dives into the startup ecosystem.
                     </p>
+                    
+                    {post.authorSocial && (
+                      <div className="flex items-center gap-3 mt-2">
+                        {post.authorSocial.twitter && (
+                          <Link href={post.authorSocial.twitter} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary-blue transition-colors">
+                            <Twitter className="h-5 w-5" />
+                          </Link>
+                        )}
+                        {post.authorSocial.linkedin && (
+                          <Link href={post.authorSocial.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary-blue transition-colors">
+                            <Linkedin className="h-5 w-5" />
+                          </Link>
+                        )}
+                        {post.authorSocial.github && (
+                          <Link href={post.authorSocial.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary-blue transition-colors">
+                            <Github className="h-5 w-5" />
+                          </Link>
+                        )}
+                        {post.authorSocial.website && (
+                          <Link href={post.authorSocial.website} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary-blue transition-colors">
+                            <Globe className="h-5 w-5" />
+                          </Link>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

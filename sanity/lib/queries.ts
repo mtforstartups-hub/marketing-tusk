@@ -58,6 +58,7 @@ export const POST_BY_SLUG_QUERY =
   "slug": slug.current,
   "author": author->name,
   "authorImage": author->image.asset->url,
+  "authorSocial": author->socialLinks,
   "mainImage": mainImage.asset->url,
   "categories": categories[]->title,
   tags,
