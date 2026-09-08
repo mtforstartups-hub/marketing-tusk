@@ -13,6 +13,8 @@ const envSchema = z.object({
   CLIENT_SECRET: z.string({ error: "CLIENT_SECRET needed" }),
   REFRESH_TOKEN: z.string({ error: "REFRESH_TOKEN needed" }),
   SPREADSHEET_ID: z.string({ error: "SPREADSHEET_ID needed" }),
+  TURNSTILE_SECRET: z.string({ error: "TURNSTILE_SECRET needed" }),
+  TURNSTILE_HOSTNAMES: z.string({ error: "TURNSTILE_HOSTNAMES needed" }),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
