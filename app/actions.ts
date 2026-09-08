@@ -105,6 +105,64 @@ export default async function submitContactForm(
 ): Promise<ContactFormState> {
   const result = Object.fromEntries(formData);
 
+  // Turnstile Verification
+  const token = formData.get("cf-turnstile-response");
+  const expectedAction = "contact";
+  const expectedHostnames = new Set(
+    (env.TURNSTILE_HOSTNAMES ?? "")
+      .split(",")
+      .map((hostname) => hostname.trim())
+      .filter(Boolean),
+  );
+
+  if (
+    typeof token !== "string" ||
+    token.length === 0 ||
+    token.length > 2048 ||
+    expectedHostnames.size === 0
+  ) {
+    return {
+      success: false,
+      message: "Security verification failed. Please try again.",
+    };
+  }
+
+  let turnstileResult;
+  try {
+    const r = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        signal: AbortSignal.timeout(10_000),
+        body: new URLSearchParams({
+          secret: env.TURNSTILE_SECRET,
+          response: token,
+        }),
+      },
+    );
+    if (!r.ok) throw new Error(`siteverify ${r.status}`);
+    turnstileResult = await r.json();
+  } catch (err) {
+    console.error("Turnstile fetch error:", err);
+    return {
+      success: false,
+      message: "Security verification failed. Please try again.",
+    };
+  }
+
+  if (
+    !turnstileResult.success ||
+    turnstileResult.action !== expectedAction ||
+    !expectedHostnames.has(turnstileResult.hostname)
+  ) {
+    console.error("Turnstile verification failed:", turnstileResult);
+    return {
+      success: false,
+      message: "Security verification failed. Please try again.",
+    };
+  }
+
   const validatedFields = contactFormSchema.safeParse(result);
 
   if (!validatedFields.success) {

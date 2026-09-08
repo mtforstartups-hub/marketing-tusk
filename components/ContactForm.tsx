@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useActionState, useState, useEffect } from "react";
+import Script from "next/script";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,7 +34,12 @@ export default function ContactForm() {
     if (state.success) {
       sendGTMEvent({ event: "contact_form_submit", role: selectedRole });
     }
-  }, [state.success, selectedRole]);
+
+    // Reset Turnstile token after every submission attempt (success or error)
+    if (state.message && typeof window !== "undefined" && (window as any).turnstile) {
+      (window as any).turnstile.reset();
+    }
+  }, [state, selectedRole]);
 
   const renderRoleSpecificFields = () => {
     switch (selectedRole) {
@@ -336,6 +342,14 @@ export default function ContactForm() {
           {state.message}
         </div>
       )}
+
+      {/* Cloudflare Turnstile Widget */}
+      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+      <div
+        className="cf-turnstile"
+        data-sitekey="0x4AAAAAAEsnVkFZM0C-ZGl9"
+        data-action="contact"
+      ></div>
 
       <Button
         type="submit"
