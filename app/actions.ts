@@ -176,59 +176,60 @@ export default async function submitContactForm(
   }
 
   try {
-    const htmlContent = generateAdminEmailHtml(validatedFields.data);
+    // const htmlContent = generateAdminEmailHtml(validatedFields.data);
 
-    const mailOptions = {
-      from: `"Marketing Tusk Website" <${env.EMAIL_USER}>`,
-      to: env.ADMIN_EMAIL,
-      replyTo: validatedFields.data.email,
-      subject: `New Contact Submission from ${validatedFields.data.name}`,
-      html: htmlContent,
-    };
+    // const mailOptions = {
+    //   from: `"Marketing Tusk Website" <${env.EMAIL_USER}>`,
+    //   to: env.ADMIN_EMAIL,
+    //   replyTo: validatedFields.data.email,
+    //   subject: `New Contact Submission from ${validatedFields.data.name}`,
+    //   html: htmlContent,
+    // };
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: env.EMAIL_USER,
-        clientId: env.CLIENT_ID,
-        clientSecret: env.CLIENT_SECRET,
-        refreshToken: env.REFRESH_TOKEN,
-      },
-    });
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     type: "OAuth2",
+    //     user: env.EMAIL_USER,
+    //     clientId: env.CLIENT_ID,
+    //     clientSecret: env.CLIENT_SECRET,
+    //     refreshToken: env.REFRESH_TOKEN,
+    //   },
+    // });
 
     // Run both tasks in parallel
-    const emailPromise = transporter.sendMail(mailOptions);
-    const sheetPromise = appendToGoogleSheet(validatedFields.data);
+    // const emailPromise = transporter.sendMail(mailOptions);
+    // const sheetPromise = appendToGoogleSheet(validatedFields.data);
 
     // Wait for both to finish, regardless of success/failure
-    const [emailResult, sheetResult] = await Promise.allSettled([
-      emailPromise,
-      sheetPromise,
-    ]);
+    // const [emailResult, sheetResult] = await Promise.allSettled([
+    //   emailPromise,
+    //   sheetPromise,
+    // ]);
 
     // Error logging for your server console
-    if (emailResult.status === "rejected") {
-      console.error("Critical: Email failed to send", emailResult.reason);
-    }
-    if (sheetResult.status === "rejected") {
-      console.error(
-        "Warning: Failed to save to Google Sheets",
-        sheetResult.reason,
-      );
-    }
+    // if (emailResult.status === "rejected") {
+    //   console.error("Critical: Email failed to send", emailResult.reason);
+    // }
+    // if (sheetResult.status === "rejected") {
+    //   console.error(
+    //     "Warning: Failed to save to Google Sheets",
+    //     sheetResult.reason,
+    //   );
+    // }
 
     // If BOTH failed, tell the user there was an error
-    if (
-      emailResult.status === "rejected" &&
-      sheetResult.status === "rejected"
-    ) {
-      throw new Error("Both email and sheet backup failed.");
-    }
+    // if (
+    //   emailResult.status === "rejected" &&
+    //   sheetResult.status === "rejected"
+    // ) {
+    //   throw new Error("Both email and sheet backup failed.");
+    // }
 
     return {
       success: true,
-      message: "Your message has been sent successfully!",
+      // message: "Your message has been sent successfully!",
+      message: `${validatedFields.data}`,
       errors: {},
     };
   } catch (error) {
