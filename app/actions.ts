@@ -164,24 +164,29 @@ export default async function submitContactForm(
     };
   }
 
-  if (turnstileResult.action !== expectedAction) {
-    console.error(
-      `[Turnstile] action mismatch: expected="${expectedAction}", got="${turnstileResult.action}"`,
-    );
-    return {
-      success: false,
-      message: "Security verification failed. Please try again.",
-    };
-  }
+  // Only check action and hostname if not using the Cloudflare dummy testing key
+  const isTestingKey = env.TURNSTILE_SECRET === "1x0000000000000000000000000000000AA";
 
-  if (!expectedHostnames.has(turnstileResult.hostname)) {
-    console.error(
-      `[Turnstile] hostname mismatch: got="${turnstileResult.hostname}", allowed=${JSON.stringify([...expectedHostnames])}`,
-    );
-    return {
-      success: false,
-      message: "Security verification failed. Please try again.",
-    };
+  if (!isTestingKey) {
+    if (turnstileResult.action !== expectedAction) {
+      console.error(
+        `[Turnstile] action mismatch: expected="${expectedAction}", got="${turnstileResult.action}"`,
+      );
+      return {
+        success: false,
+        message: "Security verification failed. Please try again.",
+      };
+    }
+
+    if (!expectedHostnames.has(turnstileResult.hostname)) {
+      console.error(
+        `[Turnstile] hostname mismatch: got="${turnstileResult.hostname}", allowed=${JSON.stringify([...expectedHostnames])}`,
+      );
+      return {
+        success: false,
+        message: "Security verification failed. Please try again.",
+      };
+    }
   }
 
   const validatedFields = contactFormSchema.safeParse(result);

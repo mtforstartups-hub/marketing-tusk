@@ -36,7 +36,11 @@ export default function ContactForm() {
     }
 
     // Reset Turnstile token after every submission attempt (success or error)
-    if (state.message && typeof window !== "undefined" && (window as any).turnstile) {
+    if (
+      state.message &&
+      typeof window !== "undefined" &&
+      (window as any).turnstile
+    ) {
       (window as any).turnstile.reset();
     }
   }, [state, selectedRole]);
@@ -344,10 +348,17 @@ export default function ContactForm() {
       )}
 
       {/* Cloudflare Turnstile Widget */}
-      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      />
       <div
         className="cf-turnstile"
-        data-sitekey="0x4AAAAAAEsnVkFZM0C-ZGl9"
+        data-sitekey={
+          process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ??
+          "0x4AAAAAAEsnVkFZM0C-ZGl9"
+        }
         data-action="contact"
       ></div>
 
