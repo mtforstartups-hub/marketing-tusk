@@ -12,6 +12,11 @@ on:
 jobs:
   e2e:
     name: Playwright E2E
+    # Skip tests on 'push' if it's a merged PR (checks for standard merge or squash commit messages).
+    # This prevents running tests twice (once on PR, once on merge) and duplicating emails/sheet entries.
+    if: >
+      github.event_name == 'pull_request' || 
+      (github.event_name == 'push' && !contains(github.event.head_commit.message, 'Merge pull request') && !contains(github.event.head_commit.message, '(#'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -82,3 +87,23 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  deploy-vercel:
+    name: Trigger Vercel Production Deploy
+    needs: e2e
+    # Run only on push to main (which handles both direct pushes and merged PRs)
+    # always() ensures this evaluates even if the 'e2e' job was skipped.
+    if: |
+      always() && 
+      github.event_name == 'push' &&
+      (needs.e2e.result == 'success' || needs.e2e.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Deploy Hook
+        run: |
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" ]; then
+            echo "VERCEL_DEPLOY_HOOK_URL secret is not set! Skipping deploy."
+            exit 1
+          fi
+          echo "Triggering Vercel deployment..."
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
