@@ -151,12 +151,33 @@ export default async function submitContactForm(
     };
   }
 
-  if (
-    !turnstileResult.success ||
-    turnstileResult.action !== expectedAction ||
-    !expectedHostnames.has(turnstileResult.hostname)
-  ) {
-    console.error("Turnstile verification failed:", turnstileResult);
+  if (!turnstileResult.success) {
+    console.error(
+      "[Turnstile] success=false. error-codes:",
+      turnstileResult["error-codes"],
+      "| full result:",
+      JSON.stringify(turnstileResult),
+    );
+    return {
+      success: false,
+      message: "Security verification failed. Please try again.",
+    };
+  }
+
+  if (turnstileResult.action !== expectedAction) {
+    console.error(
+      `[Turnstile] action mismatch: expected="${expectedAction}", got="${turnstileResult.action}"`,
+    );
+    return {
+      success: false,
+      message: "Security verification failed. Please try again.",
+    };
+  }
+
+  if (!expectedHostnames.has(turnstileResult.hostname)) {
+    console.error(
+      `[Turnstile] hostname mismatch: got="${turnstileResult.hostname}", allowed=${JSON.stringify([...expectedHostnames])}`,
+    );
     return {
       success: false,
       message: "Security verification failed. Please try again.",
@@ -176,60 +197,59 @@ export default async function submitContactForm(
   }
 
   try {
-    // const htmlContent = generateAdminEmailHtml(validatedFields.data);
+    const htmlContent = generateAdminEmailHtml(validatedFields.data);
 
-    // const mailOptions = {
-    //   from: `"Marketing Tusk Website" <${env.EMAIL_USER}>`,
-    //   to: env.ADMIN_EMAIL,
-    //   replyTo: validatedFields.data.email,
-    //   subject: `New Contact Submission from ${validatedFields.data.name}`,
-    //   html: htmlContent,
-    // };
+    const mailOptions = {
+      from: `"Marketing Tusk Website" <${env.EMAIL_USER}>`,
+      to: env.ADMIN_EMAIL,
+      replyTo: validatedFields.data.email,
+      subject: `New Contact Submission from ${validatedFields.data.name}`,
+      html: htmlContent,
+    };
 
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     type: "OAuth2",
-    //     user: env.EMAIL_USER,
-    //     clientId: env.CLIENT_ID,
-    //     clientSecret: env.CLIENT_SECRET,
-    //     refreshToken: env.REFRESH_TOKEN,
-    //   },
-    // });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: env.EMAIL_USER,
+        clientId: env.CLIENT_ID,
+        clientSecret: env.CLIENT_SECRET,
+        refreshToken: env.REFRESH_TOKEN,
+      },
+    });
 
     // Run both tasks in parallel
-    // const emailPromise = transporter.sendMail(mailOptions);
-    // const sheetPromise = appendToGoogleSheet(validatedFields.data);
+    const emailPromise = transporter.sendMail(mailOptions);
+    const sheetPromise = appendToGoogleSheet(validatedFields.data);
 
     // Wait for both to finish, regardless of success/failure
-    // const [emailResult, sheetResult] = await Promise.allSettled([
-    //   emailPromise,
-    //   sheetPromise,
-    // ]);
+    const [emailResult, sheetResult] = await Promise.allSettled([
+      emailPromise,
+      sheetPromise,
+    ]);
 
     // Error logging for your server console
-    // if (emailResult.status === "rejected") {
-    //   console.error("Critical: Email failed to send", emailResult.reason);
-    // }
-    // if (sheetResult.status === "rejected") {
-    //   console.error(
-    //     "Warning: Failed to save to Google Sheets",
-    //     sheetResult.reason,
-    //   );
-    // }
+    if (emailResult.status === "rejected") {
+      console.error("Critical: Email failed to send", emailResult.reason);
+    }
+    if (sheetResult.status === "rejected") {
+      console.error(
+        "Warning: Failed to save to Google Sheets",
+        sheetResult.reason,
+      );
+    }
 
     // If BOTH failed, tell the user there was an error
-    // if (
-    //   emailResult.status === "rejected" &&
-    //   sheetResult.status === "rejected"
-    // ) {
-    //   throw new Error("Both email and sheet backup failed.");
-    // }
+    if (
+      emailResult.status === "rejected" &&
+      sheetResult.status === "rejected"
+    ) {
+      throw new Error("Both email and sheet backup failed.");
+    }
 
     return {
       success: true,
-      // message: "Your message has been sent successfully!",
-      message: `${validatedFields.data}`,
+      message: "Your message has been sent successfully!",
       errors: {},
     };
   } catch (error) {
