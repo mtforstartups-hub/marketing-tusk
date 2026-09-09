@@ -37,7 +37,7 @@ export default defineConfig({
   /* Start bun dev before running tests */
   webServer: {
     command: "bun run dev",
-    url: BASE_URL,
+    url: `${BASE_URL}/contact`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     stdout: "pipe",
