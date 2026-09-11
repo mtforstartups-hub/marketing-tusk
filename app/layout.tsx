@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SocialBar from "@/components/SocialBar";
+import CookieConsent from "@/components/CookieConsent";
 import { GoogleTagManager } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -38,6 +39,7 @@ export default function RootLayout({
             {children}
             <Footer />
             <SocialBar />
+            <CookieConsent />
           </div>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
