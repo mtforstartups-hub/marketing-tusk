@@ -135,10 +135,16 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>
+        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-400">
+          <p className="mb-4 md:mb-0">
             &copy; <CurrentYear /> Marketing Tusk. All rights reserved.
           </p>
+          <div className="flex flex-wrap justify-center gap-4 text-sm">
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="/cookie-policy" className="hover:text-white transition-colors">Cookie Policy</Link>
+            <Link href="/refund-and-cancellation-policy" className="hover:text-white transition-colors">Refund & Cancellation Policy</Link>
+          </div>
         </div>
       </div>
     </footer>
