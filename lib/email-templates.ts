@@ -10,6 +10,19 @@ type TemplateData = {
   [key: string]: any;
 };
 
+/**
+ * Builds role-specific HTML table rows for an admin email based on the provided template data.
+ *
+ * Generates a concatenated string of <tr> elements for the `data.role` branch: "founder", "investor", or "enabler".
+ * Multi-value fields `fundingStage` and `investmentStage` are joined with ", " before rendering.
+ * If a value is falsy, the cell displays "N/A".
+ *
+ * @param data - Template input whose `role` selects which fields are rendered; expected role-specific fields:
+ *               founder: `fundingStage` (string[]), `teamSize`, `sector`
+ *               investor: `investmentRange`, `investmentStage` (string[]), `sectorsOfInterest`
+ *               enabler: `organizationType`, `programType`, `supportServices`
+ * @returns A string containing the HTML table rows for the selected role's additional details
+ */
 function getRoleSpecificHtml(data: TemplateData) {
   let rows = "";
   const formatRow = (label: string, value: string) => `
@@ -20,12 +33,12 @@ function getRoleSpecificHtml(data: TemplateData) {
   `;
 
   if (data.role === "founder") {
-    rows += formatRow("Funding Stage", data.fundingStage);
+    rows += formatRow("Funding Stage", data.fundingStage.join(", "));
     rows += formatRow("Team Size", data.teamSize);
     rows += formatRow("Industry Sector", data.sector);
   } else if (data.role === "investor") {
     rows += formatRow("Investment Range", data.investmentRange);
-    rows += formatRow("Preferred Stage", data.investmentStage);
+    rows += formatRow("Preferred Stage", data.investmentStage.join(", "));
     rows += formatRow("Sectors of Interest", data.sectorsOfInterest);
   } else if (data.role === "enabler") {
     rows += formatRow("Organization Type", data.organizationType);
