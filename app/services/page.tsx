@@ -5,23 +5,49 @@ import Link from "next/link";
 
 const growthEngines = [
   {
+    number: "01",
     icon: Wallpaper,
     title: "Design & Branding",
-    description: "Build stronger brands and communication.",
-    link: "/design",
+    tagline: "Build stronger brands and communication.",
+    description:
+      "Crafting investor-ready pitch decks, distinctive visual identities, and corporate collateral that establish immediate category authority.",
+    capabilities: [
+      "Pitch Decks",
+      "Brand Guidelines",
+      "Visual Identity",
+      "Report Design",
+    ],
+    link: "/contact",
   },
   {
+    number: "02",
     icon: Megaphone,
     title: "Marketing & Visibility",
-    description: "Get discovered, build authority and generate demand.",
-    link: "/marketing",
+    tagline: "Get discovered, build authority and generate demand.",
+    description:
+      "Data-backed acquisition campaigns, founder personal branding, and high-impact PR outreach that turn obscurity into market presence.",
+    capabilities: [
+      "Performance Ads",
+      "Personal Branding",
+      "PR & Media",
+      "Content Strategy",
+    ],
+    link: "/contact",
   },
   {
+    number: "03",
     icon: Cpu,
     title: "Tech & Enablement",
+    tagline: "Create the digital infrastructure and systems needed to scale.",
     description:
-      "Create the digital infrastructure and systems needed to scale.",
-    link: "/tech",
+      "Modern conversion-focused web engineering, marketing automation funnels, and analytics architecture engineered for sustainable growth.",
+    capabilities: [
+      "Web Development",
+      "Landing Pages",
+      "Automation Funnels",
+      "Analytics Setup",
+    ],
+    link: "/contact",
   },
 ];
 
@@ -66,58 +92,109 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Featured Service Card Concepts Section */}
-      <section className="py-20 bg-muted/15 border-b border-border/60">
+      {/* Three Growth Engines Section - Asymmetric Editorial Architecture */}
+      <section className="py-24 border-b border-border/60">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Capabilities. Three Growth Engines.
-            </h2>
-            <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Marketing Tusk brings together three complementary capability
-              areas.
-            </p>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            {/* Left Column: Thesis & Manifesto */}
+            <div className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
+              <span className="text-xs font-mono uppercase tracking-wider text-primary-blue bg-primary-blue-light px-3 py-1 rounded-full inline-block font-semibold">
+                Capability Architecture
+              </span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-tight">
+                Our Capabilities.
+                <br />
+                <span className="text-muted-foreground font-normal">
+                  Three Growth Engines.
+                </span>
+              </h2>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                Rather than managing disconnected agencies for design,
+                performance, and tech, Marketing Tusk unifies all three
+                disciplines under one cohesive execution loop.
+              </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-2">
-            {growthEngines.map((engine, index) => (
-              <Link
-                key={index}
-                href={engine.link}
-                className="group bg-card border-2 border-foreground/10 hover:border-foreground/30 dark:border-white/10 dark:hover:border-white/30 p-8 md:p-10 rounded-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="text-primary-blue mb-8">
-                    <engine.icon className="size-10 stroke-[1.75]" />
-                  </div>
-                  <h3 className="text-2xl font-bold tracking-tight text-foreground mb-3">
-                    {engine.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {engine.description}
-                  </p>
+              <div className="pt-4 border-t border-border/60">
+                <div className="text-xs text-muted-foreground mb-3 font-medium">
+                  Need a customized growth roadmap?
                 </div>
-                <div className="pt-8 mt-8 border-t border-border/40">
-                  <Link href="/contact" className="brand-cta-button">
-                    <span>Get started</span>
-                    <div className="btn-icon">
-                      <svg
-                        height="24"
-                        width="24"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M0 0h24v24H0z" fill="none" />
-                        <path
-                          d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"
-                          fill="currentColor"
-                        />
-                      </svg>
+                <Link href="/contact">
+                  <Button
+                    variant="outline"
+                    className="border-primary-blue-light hover:bg-primary-blue-light hover:border-primary-blue text-foreground font-medium"
+                  >
+                    Schedule a Consultation
+                    <ArrowRight className="ml-2 h-4 w-4 text-primary-blue" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Three Stacked High-Impact Engine Rows */}
+            <div className="lg:col-span-8 space-y-6">
+              {growthEngines.map((engine, index) => (
+                <div
+                  key={index}
+                  className="group relative bg-card border-2 border-foreground/10 hover:border-foreground/30 dark:border-white/10 dark:hover:border-white/30 rounded-2xl p-7 md:p-9 transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-border/40">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-muted/60 dark:bg-muted/30 border border-border/60 flex items-center justify-center text-primary-blue transition-colors group-hover:bg-primary-blue-light flex-shrink-0">
+                        <engine.icon className="h-7 w-7 stroke-[1.75]" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-mono text-muted-foreground/70 uppercase tracking-widest block">
+                          Engine {engine.number}
+                        </span>
+                        <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                          {engine.title}
+                        </h3>
+                      </div>
                     </div>
-                  </Link>
+
+                    <div className="w-full sm:w-auto sm:min-w-[190px]">
+                      <Link href={engine.link} className="brand-cta-button">
+                        <span>Get started</span>
+                        <div className="btn-icon">
+                          <svg
+                            height="24"
+                            width="24"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                              d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="pt-6 space-y-3">
+                    <p className="text-base text-foreground font-semibold leading-relaxed">
+                      {engine.tagline}
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {engine.description}
+                    </p>
+
+                    <div className="pt-2 flex flex-wrap gap-2">
+                      {engine.capabilities.map((cap, capIdx) => (
+                        <span
+                          key={capIdx}
+                          className="text-xs px-3 py-1 rounded-md bg-muted/70 text-muted-foreground font-medium border border-border/40"
+                        >
+                          {cap}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </Link>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
