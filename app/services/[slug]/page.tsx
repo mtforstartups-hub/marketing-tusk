@@ -164,8 +164,7 @@ const serviceCategories: ServiceCategory[] = [
       },
       {
         title: "Events & Offline Visibility",
-        description:
-          "Event marketing, OOH, DOOH and campaign activations.",
+        description: "Event marketing, OOH, DOOH and campaign activations.",
         icon: MapPin,
       },
     ],
@@ -192,7 +191,7 @@ const serviceCategories: ServiceCategory[] = [
       {
         title: "UI/UX Design",
         description:
-          "The description printed in the source reads: \"Founder, leadership and professional positioning.\"",
+          'The description printed in the source reads: "Founder, leadership and professional positioning."',
         icon: Layout,
       },
       {
@@ -226,7 +225,7 @@ const serviceCategories: ServiceCategory[] = [
 function getCategoryBySlug(slug: string): ServiceCategory | undefined {
   const normalized = slug.toLowerCase().trim();
   return serviceCategories.find(
-    (cat) => cat.slug === normalized || cat.aliases.includes(normalized)
+    (cat) => cat.slug === normalized || cat.aliases.includes(normalized),
   );
 }
 
@@ -337,7 +336,9 @@ export default async function ServiceCategoryPage({
                       : "bg-card border border-border/70 text-muted-foreground hover:text-foreground hover:border-foreground/30"
                   }`}
                 >
-                  <span className="opacity-70 mr-1.5 font-mono">{cat.number}</span>
+                  <span className="opacity-70 mr-1.5 font-mono">
+                    {cat.number}
+                  </span>
                   {cat.title}
                 </Link>
               );
@@ -357,7 +358,8 @@ export default async function ServiceCategoryPage({
               Specialized Subcategories
             </h2>
             <p className="text-muted-foreground text-base">
-              Distinct capabilities delivered with end-to-end strategy, execution, and measured business impact.
+              Distinct capabilities delivered with end-to-end strategy,
+              execution, and measured business impact.
             </p>
           </div>
 
@@ -422,7 +424,8 @@ export default async function ServiceCategoryPage({
                 Next Engine: {category.nextTitle}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Explore our complementary solutions for full-funnel business momentum.
+                Explore our complementary solutions for full-funnel business
+                momentum.
               </p>
             </div>
             <Link href={`/services/${category.nextSlug}`}>
