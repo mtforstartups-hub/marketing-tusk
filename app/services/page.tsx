@@ -17,7 +17,7 @@ const growthEngines = [
       "Visual Identity",
       "Report Design",
     ],
-    link: "/contact",
+    link: "/services/design-and-branding",
   },
   {
     number: "02",
@@ -32,7 +32,7 @@ const growthEngines = [
       "PR & Media",
       "Content Strategy",
     ],
-    link: "/contact",
+    link: "/services/marketing-and-visibility",
   },
   {
     number: "03",
@@ -47,7 +47,7 @@ const growthEngines = [
       "Automation Funnels",
       "Analytics Setup",
     ],
-    link: "/contact",
+    link: "/services/tech-and-enablement",
   },
 ];
 
