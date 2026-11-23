@@ -63,7 +63,7 @@ export default async function CoreServicePage({
     <div className="min-h-screen bg-background">
       {/* Header Banner */}
       <section className="py-16 md:py-20 bg-gradient-primary-light border-b border-border/50">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4">
           {/* Breadcrumb / Back Link */}
           <div className="mb-6">
             <Link
@@ -113,7 +113,7 @@ export default async function CoreServicePage({
 
       {/* Main Two-Column Layout: Left Side Main Core List | Right Side Services with Description */}
       <section className="py-16 md:py-20">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             {/* Left Side: List of Main Cores */}
             <aside className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
