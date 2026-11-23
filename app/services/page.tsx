@@ -1,530 +1,559 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ThemeToggle } from "@/components/theme-toggle"
+import React, { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import ServicesCTA from "@/components/ServicesCTA";
 import {
-  ArrowRight,
-  Users,
-  PresentationIcon as PresentationChart,
-  Globe,
-  Share2,
+  Compass,
   Palette,
-  User,
-  Mail,
-  FileText,
-  BarChart,
-  Mic,
-  MapPin,
-  Newspaper,
-  Megaphone,
-  Network,
-  Menu,
-  X,
-  CheckCircle,
-  Star,
-  Clock,
+  PresentationIcon as Presentation,
+  BookOpen,
+  BarChart3,
+  Video,
+  TrendingUp,
+  Share2,
+  UserCheck,
   Target,
-  Linkedin,
-  Twitter,
-  Instagram,
-  Facebook,
-  MessageCircle,
-} from "lucide-react"
-import { useState } from "react"
-import Link from "next/link"
+  Zap,
+  Search,
+  Mail,
+  Newspaper,
+  MapPin,
+  Globe,
+  Layout,
+  Workflow,
+  Database,
+  Cpu,
+  Eye,
+  ArrowRight,
+  ArrowUpRight,
+  Sparkles,
+  Layers,
+  ChevronDown,
+  CheckCircle2,
+} from "lucide-react";
+
+interface SubService {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  deliverables: string[];
+}
+
+interface ServiceGroup {
+  number: string;
+  id: string;
+  title: string;
+  titlePrefix: string;
+  titleHighlight: string;
+  tagline: string;
+  description: string;
+  accentColor: string;
+  services: SubService[];
+}
+
+const serviceGroups: ServiceGroup[] = [
+  {
+    number: "01",
+    id: "design-and-branding",
+    title: "Design & Branding",
+    titlePrefix: "Design &",
+    titleHighlight: "Branding",
+    tagline: "Build brands and communication that are credible, consistent and commercially strong.",
+    description:
+      "Crafting investor-ready pitch decks, distinctive visual identities, and corporate collateral that establish immediate category authority and market trust.",
+    accentColor: "from-blue-500/20 to-sky-500/20",
+    services: [
+      {
+        title: "Brand Strategy & Identity",
+        description:
+          "Positioning, visual identity, logo systems, guidelines, and comprehensive rebranding architecture.",
+        icon: Compass,
+        deliverables: ["Brand Positioning", "Visual Identity Systems", "Logo Guidelines", "Rebranding Strategy"],
+      },
+      {
+        title: "Creative & Graphic Design",
+        description:
+          "Creative direction, campaign visual assets, high-impact social creatives, and multi-channel marketing collateral.",
+        icon: Palette,
+        deliverables: ["Creative Direction", "Campaign Assets", "Social Media Creatives", "Marketing Collateral"],
+      },
+      {
+        title: "Pitch Decks & Presentations",
+        description:
+          "Persuasive, investor-ready pitch decks and executive business presentations supported by sharp storytelling and design.",
+        icon: Presentation,
+        deliverables: ["Investor Pitch Decks", "Sales Presentations", "Narrative Structuring", "Data Visualization"],
+      },
+      {
+        title: "Corporate Collateral",
+        description:
+          "Corporate profiles, product brochures, sales catalogues, and polished business communication materials.",
+        icon: BookOpen,
+        deliverables: ["Company Profiles", "Brochures & Catalogs", "One-Pagers", "Event Collateral"],
+      },
+      {
+        title: "Reports & Information Design",
+        description:
+          "Impactful corporate reports, research publications, executive infographics, and complex data visualisation.",
+        icon: BarChart3,
+        deliverables: ["Annual Reports", "Whitepapers", "Executive Infographics", "Data Visualisation"],
+      },
+      {
+        title: "Video & Multimedia",
+        description:
+          "Brand videos, high-converting motion graphics, product walkthroughs, and immersive visual storytelling.",
+        icon: Video,
+        deliverables: ["Brand Videos", "Motion Graphics", "Product Demos", "Visual Storytelling"],
+      },
+    ],
+  },
+  {
+    number: "02",
+    id: "marketing-and-visibility",
+    title: "Marketing & Visibility",
+    titlePrefix: "Marketing &",
+    titleHighlight: "Visibility",
+    tagline: "Build awareness, authority, reach and demand across the channels that matter.",
+    description:
+      "Data-backed acquisition campaigns, founder personal branding, and high-impact PR outreach that turn obscurity into market presence and sustained pipeline.",
+    accentColor: "from-indigo-500/20 to-primary-blue/20",
+    services: [
+      {
+        title: "Marketing & Growth Strategy",
+        description:
+          "Comprehensive marketing strategy, go-to-market (GTM) planning, campaign frameworks, and milestone-driven growth roadmaps.",
+        icon: TrendingUp,
+        deliverables: ["GTM Roadmaps", "Growth Strategy", "Channel Optimization", "Audience Research"],
+      },
+      {
+        title: "Social Media & Content",
+        description:
+          "Strategic social media management, organic content calendars, creative production, and active community engagement.",
+        icon: Share2,
+        deliverables: ["Content Strategy", "Channel Management", "Creative Assets", "Community Growth"],
+      },
+      {
+        title: "Personal Branding",
+        description:
+          "Founder, leadership, and professional positioning to establish industry authority, investor trust, and executive presence.",
+        icon: UserCheck,
+        deliverables: ["Founder Positioning", "LinkedIn Growth", "Thought Leadership", "Network Expansion"],
+      },
+      {
+        title: "Lead Generation & Outreach",
+        description:
+          "Targeted B2B prospecting, customized account-based campaigns, multi-touch LinkedIn outreach, and cold email workflows.",
+        icon: Target,
+        deliverables: ["Targeted Prospecting", "B2B Campaigns", "LinkedIn Sequences", "Email Outreach"],
+      },
+      {
+        title: "Performance Marketing",
+        description:
+          "ROI-driven digital acquisition campaigns across Google Ads, Meta (IG & FB), LinkedIn, and programmatic channels.",
+        icon: Zap,
+        deliverables: ["Google Search & PMax", "Meta Ads", "LinkedIn Ads", "ROAS & Funnel Scaling"],
+      },
+      {
+        title: "Search & AI Visibility",
+        description:
+          "SEO, Answer Engine Optimization (AEO), Generative Engine Optimization (GEO), and modern AI discoverability.",
+        icon: Search,
+        deliverables: ["Technical SEO", "AI Search (GEO/AEO)", "Content Optimization", "Authority Building"],
+      },
+      {
+        title: "Email & WhatsApp Marketing",
+        description:
+          "Targeted drip campaigns, customer lifecycle nurturing, broadcast sequences, and conversational conversion communication.",
+        icon: Mail,
+        deliverables: ["Drip Sequences", "WhatsApp Broadcasts", "Retention Funnels", "Copy & Automations"],
+      },
+      {
+        title: "PR & Media",
+        description:
+          "Press communication, Tier-1 media outreach, strategic reputation management, and high-credibility editorial placements.",
+        icon: Newspaper,
+        deliverables: ["Press Releases", "Media Outreach", "Publication Placements", "Brand Authority"],
+      },
+      {
+        title: "Events & Offline Visibility",
+        description:
+          "End-to-end event marketing, trade show activations, Out-Of-Home (OOH) billboards, and Digital OOH (DOOH) campaigns.",
+        icon: MapPin,
+        deliverables: ["Event Marketing", "Booth Branding", "OOH Billboards", "DOOH Digital Screens"],
+      },
+    ],
+  },
+  {
+    number: "03",
+    id: "tech-and-enablement",
+    title: "Tech & Enablement",
+    titlePrefix: "Tech &",
+    titleHighlight: "Enablement",
+    tagline: "Build the digital infrastructure, systems and automation required to operate efficiently and scale.",
+    description:
+      "Modern conversion-focused web engineering, marketing automation funnels, and data intelligence architecture engineered for sustainable velocity.",
+    accentColor: "from-cyan-500/20 to-blue-600/20",
+    services: [
+      {
+        title: "Website Design & Development",
+        description:
+          "Modern, high-speed, and conversion-focused business websites and landing pages engineered with modern stacks.",
+        icon: Globe,
+        deliverables: ["Next.js & React Sites", "High Speed Performance", "Conversion Layouts", "CMS Integration"],
+      },
+      {
+        title: "UI/UX Design",
+        description:
+          "Intuitive digital product design, interactive wireframes, user journeys, and cohesive scalable design systems.",
+        icon: Layout,
+        deliverables: ["UI/UX Systems", "Interactive Wireframes", "User Flow Mapping", "Figma Components"],
+      },
+      {
+        title: "Sales & Workflow Automation",
+        description:
+          "Automated lead routing, instant CRM syncing, sales pipeline workflows, and friction-free operational automations.",
+        icon: Workflow,
+        deliverables: ["CRM Workflows", "Lead Routing", "Pipeline Automation", "Tool Integrations"],
+      },
+      {
+        title: "Data & Lead Intelligence",
+        description:
+          "Custom B2B database development, prospect enrichment, verified decision-maker research, and actionable intelligence.",
+        icon: Database,
+        deliverables: ["Database Enrichment", "Verified Lead Lists", "Competitive Insights", "TAM Mapping"],
+      },
+      {
+        title: "Marketing Automation",
+        description:
+          "Automated multi-channel workflows, webhook-driven triggers, lead scoring, and full-funnel tracking architecture.",
+        icon: Cpu,
+        deliverables: ["Multi-Step Automations", "Triggered Campaigns", "Lead Scoring Systems", "Analytics Architecture"],
+      },
+      {
+        title: "Digital Accessibility & Performance",
+        description:
+          "Accessibility audits, WCAG compliance implementation, Core Web Vitals optimization, and universal usability.",
+        icon: Eye,
+        deliverables: ["WCAG 2.1 Audits", "Core Web Vitals", "Accessibility Fixes", "Speed Tuning"],
+      },
+    ],
+  },
+];
 
 export default function ServicesPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [activeFilter, setActiveFilter] = useState<string>("all");
 
-  const services: {
-    icon: any;
-    title: string;
-    description: string;
-    features: string[];
-    duration?: string;
-    engagementModel?: string;
-    category: string;
-  }[] = [
-    {
-      icon: PresentationChart,
-      title: "Pitch Deck Design",
-      description:
-        "Professional, investor-ready pitch decks and business presentations designed to communicate your story clearly, persuasively, and visually",
-      features: [
-        "Investor pitch decks",
-        "Sales presentations",
-        "Storytelling & content structuring",
-        "Visual design & branding alignment",
-      ],
-      duration: "3-7 days",
-      category: "Design",
-    },
-    {
-      icon: Globe,
-      title: "Website Development",
-      description:
-        "Modern, fast, and conversion-optimized websites built to enhance your digital presence and drive business growth.",
-      features: [
-        "UI/UX design",
-        "Responsive development",
-        "Landing pages",
-        "Speed optimization",
-        "Conversion-focused structure",
-      ],
-      duration: "10-20 Days",
-      category: "Development",
-    },
-    {
-      icon: Share2,
-      title: "Social Media Marketing",
-      description:
-        "Strategic social media campaigns and creative content that build brand awareness, engagement, and audience growth.",
-      features: [
-        "Content calendar planning",
-        "Creative post design",
-        "Platform management",
-        "Engagement strategy",
-        "Performance tracking",
-      ],
-      engagementModel: "Monthly Retainer",
-      category: "Marketing",
-    },
-    {
-      icon: Palette,
-      title: "Branding Services",
-      description:
-        "Complete brand identity systems that help your business stand out and create a lasting impression in the market.",
-      features: [
-        "Logo design",
-        "Brand guidelines",
-        "Color & typography system",
-        "Visual identity creation",
-        "Brand positioning",
-      ],
-      duration: "7-14 Days",
-      category: "Design",
-    },
-    {
-      icon: User,
-      title: "Personal Branding",
-      description:
-        "Position founders and professionals as industry leaders through strategic content, visibility, and authority building.",
-      features: [
-        "LinkedIn growth strategy",
-        "Content creation",
-        "Thought leadership positioning",
-        "Profile optimization",
-        "Audience building",
-      ],
-      engagementModel: "Monthly Retainer",
-      category: "Marketing",
-    },
-    {
-      icon: Mail,
-      title: "Email & WhatsApp Marketing",
-      description:
-        "Targeted campaigns that nurture leads, improve retention, and drive conversions through direct communication channels.",
-      features: [
-        "Campaign strategy",
-        "Automation setup",
-        "Funnel creation",
-        "Broadcast campaigns",
-        "Conversion tracking",
-      ],
-      engagementModel: "5-10 Days Setup + Monthly",
-      category: "Marketing",
-    },
-    {
-      icon: FileText,
-      title: "Content Marketing",
-      description:
-        "High-quality, SEO-driven content that builds authority, attracts the right audience, and supports long-term growth.",
-      features: [
-        "Blog writing",
-        "SEO content strategy",
-        "Website content",
-        "Copywriting",
-        "Content distribution",
-      ],
-      engagementModel: "Monthly Retainer",
-      category: "Marketing",
-    },
-    {
-      icon: BarChart,
-      title: "Reports Designing",
-      description:
-        "Visually engaging and professional reports for data presentation, insights, and corporate communication.",
-      features: [
-        "Business reports",
-        "Annual reports",
-        "Data visualization",
-        "Infographics",
-        "Clean layouts",
-      ],
-      duration: "3-6 Days",
-      category: "Design",
-    },
-    {
-      icon: Mic,
-      title: "Event Marketing",
-      description:
-        "End-to-end marketing and branding support for webinars, conferences, and events to maximize reach and engagement.",
-      features: [
-        "Event promotion strategy",
-        "Landing pages",
-        "Social campaigns",
-        "Branding assets",
-        "Audience engagement",
-      ],
-      engagementModel: "Campaign-Based",
-      category: "Marketing",
-    },
-    {
-      icon: MapPin,
-      title: "OOH & DOOH Campaigns",
-      description:
-        "Outdoor and digital advertising campaigns designed to boost large-scale visibility and brand recall.",
-      features: [
-        "Billboard advertising",
-        "Digital screens (DOOH)",
-        "Location targeting",
-        "Creative design",
-        "Campaign execution",
-      ],
-      engagementModel: "Campaign-Based",
-      category: "Advertising",
-    },
-    {
-      icon: Newspaper,
-      title: "Media & Press Release",
-      description:
-        "PR and media outreach services that enhance brand credibility and secure high-impact media coverage.",
-      features: [
-        "Press release writing",
-        "Media outreach",
-        "Publication placements",
-        "Brand storytelling",
-        "PR strategy",
-      ],
-      duration: "5-10 Days",
-      category: "Advertising",
-    },
-    {
-      icon: Megaphone,
-      title: "Digital Advertising",
-      description:
-        "ROI-driven digital advertising campaigns across Google, Meta, and LinkedIn to generate leads and drive sales.",
-      features: [
-        "Google Ads",
-        "Meta Ads (Facebook/Instagram)",
-        "LinkedIn Ads",
-        "Funnel optimization",
-        "Performance tracking",
-      ],
-      engagementModel: "Monthly Retainer",
-      category: "Advertising",
-    },
+  const filteredGroups =
+    activeFilter === "all"
+      ? serviceGroups
+      : serviceGroups.filter((g) => g.id === activeFilter);
 
-    // existing networking services
-    {
-      icon: Users,
-      title: "Investor Outreach",
-      description:
-        "Strategic connections with the right investors for your startup journey",
-      features: [
-        "Investor database access",
-        "Personalized outreach",
-        "Meeting coordination",
-        "Follow-up management",
-      ],
-      duration: "4-6 weeks",
-      category: "Networking",
-    },
-    {
-      icon: Network,
-      title: "Ecosystem Enablement",
-      description:
-        "Access to accelerators, mentors, and industry experts across India",
-      features: [
-        "Accelerator applications",
-        "Mentor connections",
-        "Industry introductions",
-        "Program recommendations",
-      ],
-      duration: "3-4 weeks",
-      category: "Networking",
-    },
-  ];
-
-  const testimonials = [
-    {
-      name: "Rahul Sharma",
-      company: "TechStart Solutions",
-      role: "Founder & CEO",
-      content:
-        "Marketing Tusk helped us secure our Series A funding with an outstanding pitch deck. Their understanding of the Indian startup ecosystem is unmatched.",
-      rating: 5,
-    },
-    {
-      name: "Priya Patel",
-      company: "EcoGreen Innovations",
-      role: "Co-founder",
-      content:
-        "The branding and website development services exceeded our expectations. We saw a 300% increase in leads within the first month.",
-      rating: 5,
-    },
-    {
-      name: "Amit Kumar",
-      company: "FinTech Pro",
-      role: "Founder",
-      content:
-        "Their investor outreach program connected us with the right VCs. We closed our funding round 2 months ahead of schedule.",
-      rating: 5,
-    },
-  ]
+  const scrollToGroup = (id: string) => {
+    setActiveFilter("all");
+    setTimeout(() => {
+      const element = document.getElementById(id);
+      if (element) {
+        const yOffset = -90;
+        const y =
+          element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }, 50);
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
+    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary-blue-light selection:text-primary-blue">
+      {/* =========================================================================
+          HERO SECTION
+          ========================================================================= */}
+      <section className="relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-border/40">
+        {/* Ambient background glows */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none -z-10 overflow-hidden">
+          <div className="absolute -top-32 left-1/4 w-[500px] h-[400px] bg-primary-blue/10 rounded-full blur-[120px] dark:bg-primary-blue/15" />
+          <div className="absolute top-1/3 right-1/4 w-[450px] h-[350px] bg-indigo-500/10 rounded-full blur-[130px] dark:bg-indigo-500/15" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        </div>
 
+        <div className="container mx-auto px-4 max-w-6xl text-center relative z-10">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-blue-light text-primary-blue text-xs font-semibold uppercase tracking-wider mb-8 border border-primary-blue/20 shadow-sm backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Comprehensive Solutions & Capabilities</span>
+          </div>
 
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-primary-light">
-        <div className="container mx-auto px-4 text-center">
-          <Badge className="mb-6 bg-primary-blue-light text-primary-blue hover:bg-primary-blue-light">
-            Comprehensive Solutions
-          </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Our <span className="text-primary-blue">Marketing Services</span>
+          {/* Headline */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.12] mb-6">
+            The Growth Partner Behind{" "}
+            <span className="bg-gradient-to-r from-primary-blue via-blue-600 to-indigo-600 dark:from-blue-400 dark:via-primary-blue dark:to-indigo-400 bg-clip-text text-transparent">
+              Bold Brands.
+            </span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            From pitch decks to investor connections, we provide end-to-end marketing and ecosystem enablement services
-            tailored for Indian startups, SMEs, and ecosystem players.
+
+          {/* Subtitle */}
+          <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
+            From brand identity and investor decks to performance marketing and
+            scalable digital systems, we execute across three interconnected
+            engines to build category leaders.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact">
+
+          {/* Dual CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <Link href="/contact" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="bg-primary-blue hover:bg-primary-blue-dark text-lg px-8 py-3 transform hover:scale-105 transition-all"
+                className="w-full sm:w-auto bg-primary-blue hover:bg-primary-blue-dark text-white font-semibold text-base px-8 py-6 rounded-xl shadow-lg hover:shadow-primary-blue/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
-                Get Custom Quote
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span>Get Custom Quote</span>
+                <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </Link>
+
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-3 border-primary-blue-light hover:bg-primary-blue-light bg-transparent transform hover:scale-105 transition-all"
+              onClick={() => scrollToGroup("design-and-branding")}
+              className="w-full sm:w-auto border-border hover:border-primary-blue/40 bg-background/60 hover:bg-muted/60 text-foreground font-medium text-base px-8 py-6 rounded-xl transition-all flex items-center justify-center gap-2"
             >
-              View Portfolio
+              <span>Explore All Services</span>
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </Button>
           </div>
-        </div>
-      </section>
 
-      {/* Services Grid */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Complete Marketing Solutions for Your Growth</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choose from our comprehensive range of services designed to accelerate your startup journey
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-primary-blue-light group"
+          {/* Quick-Jump Engine Navigation Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto text-left">
+            {serviceGroups.map((group) => (
+              <button
+                key={group.id}
+                onClick={() => scrollToGroup(group.id)}
+                className="group p-4 md:p-5 rounded-2xl border border-border/70 bg-card/60 hover:bg-card hover:border-primary-blue/50 transition-all duration-300 hover:shadow-md text-left flex flex-col justify-between"
               >
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-primary-blue-light rounded-xl flex items-center justify-center mb-4 mx-auto transition-transform group-hover:scale-110">
-                    <service.icon className="h-8 w-8 text-primary-blue" />
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-mono font-bold text-primary-blue uppercase tracking-wider">
+                      Engine {group.number}
+                    </span>
+                    <ArrowDownRight className="w-4 h-4 text-muted-foreground group-hover:text-primary-blue group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-all" />
                   </div>
-                  <Badge variant="secondary" className="mb-2 w-fit mx-auto">
-                    {service.category}
-                  </Badge>
-                  <CardTitle className="text-xl text-foreground group-hover:text-primary-blue transition-colors">
-                    {service.title}
-                  </CardTitle>
-                  <p className="text-muted-foreground text-sm">{service.description}</p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    {service.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-primary-blue flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t pt-4 space-y-2">
-                    {/*} <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                        <Target className="h-4 w-4 text-primary-blue" />
-                        <span className="text-sm font-medium text-foreground">Price</span>
-                      </div>
-                      <span className="text-sm font-semibold text-primary-blue">{service.price}</span>
-                    </div>*/}
-                    {service.duration && (
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4 text-primary-blue" />
-                          <span className="text-sm m-3 font-medium text-foreground">Timeline</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">{service.duration}</span>
-                      </div>
-                    )}
-                    {service.engagementModel && (
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Target className="h-4 w-4 text-primary-blue" />
-                          <span className="text-sm m-3 font-medium text-foreground">Engagement Model</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">{service.engagementModel}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <Link href="/contact">
-                    <Button className="w-full bg-primary-blue hover:bg-primary-blue-dark transform hover:scale-105 transition-all">
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                  <h3 className="font-bold text-foreground text-base group-hover:text-primary-blue transition-colors">
+                    {group.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                    {group.tagline}
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground font-medium">
+                  <span>{group.services.length} Capabilities</span>
+                  <span className="text-primary-blue group-hover:underline font-semibold">
+                    Jump to section →
+                  </span>
+                </div>
+              </button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Process Section */}
-      <section className="py-20 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Process</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              A systematic approach that ensures quality delivery and measurable results
-            </p>
+      {/* =========================================================================
+          GROUPED SERVICES SECTION
+          ========================================================================= */}
+      <section id="services-catalog" className="py-20 md:py-28 relative">
+        <div className="container mx-auto px-4 max-w-7xl">
+          {/* Section Filter Controls */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-16 pb-8 border-b border-border/60">
+            <div>
+              <span className="text-xs font-mono uppercase tracking-widest text-primary-blue font-semibold block mb-1">
+                Capabilities Directory
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                Explore Services by Engine
+              </h2>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-muted/50 border border-border/70 backdrop-blur-sm">
+              <button
+                onClick={() => setActiveFilter("all")}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                  activeFilter === "all"
+                    ? "bg-primary-blue text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                All Engines (21)
+              </button>
+              {serviceGroups.map((group) => (
+                <button
+                  key={group.id}
+                  onClick={() => setActiveFilter(group.id)}
+                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                    activeFilter === group.id
+                      ? "bg-primary-blue text-white shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {group.title} ({group.services.length})
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Discovery & Strategy",
-                description:
-                  "We understand your goals, target audience, and market positioning to create a tailored strategy.",
-              },
-              {
-                step: "02",
-                title: "Design & Development",
-                description: "Our expert team creates compelling designs and content that resonate with your audience.",
-              },
-              {
-                step: "03",
-                title: "Review & Refinement",
-                description:
-                  "We collaborate with you to refine and perfect every detail until it meets your expectations.",
-              },
-              {
-                step: "04",
-                title: "Launch & Support",
-                description: "We ensure smooth delivery and provide ongoing support to maximize your success.",
-              },
-            ].map((process, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-primary-blue text-white rounded-full flex items-center justify-center text-xl font-bold mb-4 mx-auto">
-                  {process.step}
+          {/* Service Groups List */}
+          <div className="space-y-24 md:space-y-32">
+            {filteredGroups.map((group) => (
+              <div
+                key={group.id}
+                id={group.id}
+                className="scroll-mt-28 relative group/section"
+              >
+                {/* Engine Group Header Banner */}
+                <div className="mb-10 md:mb-12 p-8 md:p-10 rounded-3xl border border-border/70 bg-gradient-to-br from-card via-card/90 to-muted/30 relative overflow-hidden shadow-sm">
+                  <div
+                    className={`absolute -right-20 -top-20 w-80 h-80 rounded-full bg-gradient-to-br ${group.accentColor} blur-3xl pointer-events-none -z-10`}
+                  />
+
+                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                    <div className="max-w-3xl space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className="px-3 py-1 rounded-full bg-primary-blue-light text-primary-blue text-xs font-mono font-bold tracking-wider uppercase border border-primary-blue/20">
+                          Engine {group.number}
+                        </span>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {group.services.length} Specialized Capabilities
+                        </span>
+                      </div>
+
+                      <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
+                        {group.titlePrefix}{" "}
+                        <span className="text-primary-blue">
+                          {group.titleHighlight}
+                        </span>
+                      </h3>
+
+                      <p className="text-base sm:text-lg font-medium text-foreground/90">
+                        {group.tagline}
+                      </p>
+
+                      <p className="text-sm text-muted-foreground leading-relaxed pt-1 max-w-2xl">
+                        {group.description}
+                      </p>
+                    </div>
+
+                    <div className="flex-shrink-0">
+                      <Link
+                        href={`/contact?service=${encodeURIComponent(group.title)}`}
+                      >
+                        <Button
+                          variant="outline"
+                          className="border-primary-blue/30 hover:border-primary-blue hover:bg-primary-blue-light text-foreground font-semibold px-5 py-5 rounded-xl transition-all flex items-center gap-2 group-hover:shadow-md"
+                        >
+                          <span>Consult on {group.title}</span>
+                          <ArrowRight className="w-4 h-4 text-primary-blue" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">{process.title}</h3>
-                <p className="text-muted-foreground">{process.description}</p>
+
+                {/* Grid of Subservices in this Group */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7 items-stretch">
+                  {group.services.map((service, serviceIndex) => {
+                    const ServiceIcon = service.icon;
+                    return (
+                      <div
+                        key={serviceIndex}
+                        className="group/card relative rounded-2xl border border-border/80 bg-card p-6 md:p-7 flex flex-col justify-between transition-all duration-300 hover:border-primary-blue/40 hover:shadow-xl hover:-translate-y-1"
+                      >
+                        <div>
+                          {/* Card Top: Icon & Counter */}
+                          <div className="flex items-center justify-between mb-5">
+                            <div className="w-12 h-12 rounded-xl bg-primary-blue-light text-primary-blue flex items-center justify-center border border-primary-blue/20 transition-transform duration-300 group-hover/card:scale-110">
+                              <ServiceIcon className="w-6 h-6 stroke-[1.8]" />
+                            </div>
+                            <span className="text-[11px] font-mono font-medium text-muted-foreground/70 uppercase tracking-widest px-2.5 py-1 rounded-md bg-muted/60">
+                              {group.number}.{serviceIndex + 1 < 10 ? `0${serviceIndex + 1}` : serviceIndex + 1}
+                            </span>
+                          </div>
+
+                          {/* Title */}
+                          <h4 className="text-xl font-bold tracking-tight text-foreground mb-2.5 group-hover/card:text-primary-blue transition-colors">
+                            {service.title}
+                          </h4>
+
+                          {/* Description */}
+                          <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                            {service.description}
+                          </p>
+
+                          {/* Deliverables / Capabilities Tags */}
+                          <div className="flex flex-wrap gap-1.5 pt-2">
+                            {service.deliverables.map((item, itemIdx) => (
+                              <span
+                                key={itemIdx}
+                                className="inline-flex items-center text-[11px] font-medium px-2.5 py-1 rounded-lg bg-muted/70 text-muted-foreground border border-border/50 group-hover/card:border-border transition-colors"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Card Bottom CTA Link */}
+                        <div className="mt-6 pt-5 border-t border-border/60">
+                          <Link
+                            href={`/contact?service=${encodeURIComponent(service.title)}`}
+                            className="inline-flex items-center justify-between w-full text-xs font-semibold text-foreground group-hover/card:text-primary-blue transition-colors py-1"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <span>Inquire for this service</span>
+                            </span>
+                            <div className="w-7 h-7 rounded-lg bg-muted/80 group-hover/card:bg-primary-blue group-hover/card:text-white flex items-center justify-center transition-all duration-300">
+                              <ArrowUpRight className="w-4 h-4 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5 transition-transform" />
+                            </div>
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section 
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">What Our Clients Say</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Don't just take our word for it - hear from startups who have transformed their growth with our services
-            </p>
-          </div>
+      {/* =========================================================================
+          BOTTOM CTA COMPONENT SECTION
+          ========================================================================= */}
+      <ServicesCTA
+        badge="Ready to Scale?"
+        title="Ready to Accelerate Your Business Growth?"
+        description="Whether you need a dedicated growth engine or an end-to-end partner across design, marketing, and engineering, our multidisciplinary team is ready to deliver measurable results."
+        primaryButtonText="Start Your Project Today"
+        primaryButtonLink="/contact"
+        secondaryButtonText="Schedule a Consultation"
+        secondaryButtonLink="/contact?service=Consultation"
+      />
+    </div>
+  );
+}
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all duration-300">
-                <CardHeader>
-                  <div className="flex items-center space-x-1 mb-2">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground italic">"{testimonial.content}"</p>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary-blue-light rounded-full flex items-center justify-center">
-                      <span className="text-primary-blue font-semibold text-sm">
-                        {testimonial.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground">{testimonial.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {testimonial.role}, {testimonial.company}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-        {/* CTA Section */ }
-      < section className="py-20 bg-gradient-primary text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Accelerate Your Growth?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-            Join hundreds of successful startups who have transformed their journey with our comprehensive marketing
-            services.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact">
-              <Button
-                size="lg"
-                className="bg-white text-primary-blue hover:bg-gray-100 text-lg px-8 py-3 transform hover:scale-105 transition-all"
-              >
-                Start Your Project Today
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-primary-blue text-lg px-8 py-3 transform hover:scale-105 transition-all bg-transparent"
-            >
-              Schedule a Consultation
-            </Button>
-          </div>
-        </div>
-      </section>
-
-
-    </div >
-  )
+// Helper icon component for downward arrow
+function ArrowDownRight(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="m7 7 10 10" />
+      <path d="M17 7v10H7" />
+    </svg>
+  );
 }
