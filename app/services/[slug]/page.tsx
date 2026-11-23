@@ -78,10 +78,10 @@ export default async function CoreServicePage({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <Badge className="bg-primary-blue-light text-primary-blue hover:bg-primary-blue-light">
+                <Badge className="bg-primary-blue text-white hover:bg-primary-blue-dark font-semibold">
                   {currentCore.badge}
                 </Badge>
-                <span className="text-xs font-mono text-muted-foreground font-semibold">
+                <span className="text-xs font-mono text-foreground/80 font-semibold px-2 py-0.5 rounded bg-muted">
                   {currentCore.services.length} Specialized Capabilities
                 </span>
               </div>
@@ -135,30 +135,38 @@ export default async function CoreServicePage({
                       <Link
                         key={core.slug}
                         href={`/services/${core.slug}`}
-                        className={`block rounded-xl p-4 transition-all duration-200 border ${
+                        className={`block rounded-xl p-4 transition-all duration-200 border-2 ${
                           isActive
-                            ? "bg-primary-blue-light/70 border-primary-blue text-primary-blue shadow-sm"
-                            : "bg-background/60 hover:bg-muted/60 border-border/70 text-foreground hover:border-primary-blue/30"
+                            ? "bg-primary-blue text-white border-primary-blue shadow-md"
+                            : "bg-card hover:bg-muted/70 border-border text-foreground hover:border-primary-blue/40"
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
                             <div
-                              className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
                                 isActive
-                                  ? "bg-primary-blue text-white"
-                                  : "bg-muted text-muted-foreground"
+                                  ? "bg-white text-primary-blue shadow-sm"
+                                  : "bg-primary-blue-light text-primary-blue"
                               }`}
                             >
                               <SidebarIcon className="h-4 w-4" />
                             </div>
                             <div>
-                              <span className="text-[11px] font-mono text-muted-foreground block">
+                              <span
+                                className={`text-[11px] font-mono font-semibold block ${
+                                  isActive
+                                    ? "text-blue-100"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
                                 {core.badge}
                               </span>
                               <span
                                 className={`text-sm font-bold block ${
-                                  isActive ? "text-primary-blue" : "text-foreground"
+                                  isActive
+                                    ? "text-white"
+                                    : "text-foreground"
                                 }`}
                               >
                                 {core.title}
@@ -166,14 +174,20 @@ export default async function CoreServicePage({
                             </div>
                           </div>
                           <ChevronRight
-                            className={`h-4 w-4 ${
+                            className={`h-4 w-4 transition-transform ${
                               isActive
-                                ? "text-primary-blue"
-                                : "text-muted-foreground/40"
+                                ? "text-white translate-x-0.5"
+                                : "text-muted-foreground/50"
                             }`}
                           />
                         </div>
-                        <p className="text-xs text-muted-foreground mt-2 line-clamp-1">
+                        <p
+                          className={`text-xs mt-2 line-clamp-1 font-medium ${
+                            isActive
+                              ? "text-blue-100"
+                              : "text-muted-foreground"
+                          }`}
+                        >
                           {core.services.length} capabilities included
                         </p>
                       </Link>
@@ -230,7 +244,7 @@ export default async function CoreServicePage({
                               <CardTitle className="text-xl text-foreground group-hover:text-primary-blue transition-colors">
                                 {service.title}
                               </CardTitle>
-                              <span className="text-[11px] font-mono text-muted-foreground">
+                              <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-muted text-foreground/80 inline-block mt-0.5">
                                 {currentCore.number}.{index + 1 < 10 ? `0${index + 1}` : index + 1}
                               </span>
                             </div>
