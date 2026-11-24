@@ -43,7 +43,7 @@ export async function generateMetadata({
 
   const ogImage = post.mainImage
     ? post.mainImage
-    : `${siteUrl}/placeholder.jpg`;
+    : `${siteUrl}/images/og-image.jpg`;
 
   const description = post.body
     ? post.body
@@ -59,18 +59,22 @@ export async function generateMetadata({
     title: `${post.title} | Marketing Tusk Insights`,
     description,
     metadataBase: new URL(siteUrl),
-    // keywords: will add later
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
     authors: [post.author || "Marketing Tusk"],
     openGraph: {
       title: post.title,
       description,
       url: `${siteUrl}/blog/${slug}`,
+      siteName: "Marketing Tusk",
+      locale: "en_IN",
       type: "article",
       publishedTime: post.publishedAt,
       authors: [post.author || "Marketing Tusk"],
       images: [
         {
-          url: post.mainImage || "/placeholder.jpg",
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -81,6 +85,8 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: post.title,
       description,
+      site: "@marketingtusk",
+      creator: "@marketingtusk",
       images: [ogImage],
     },
   };
@@ -99,9 +105,13 @@ export default async function BlogPostPage({
     notFound();
   }
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.marketingtusk.com";
+
   const relatedPosts = await getRelatedPosts(post._id, post.categories ?? []);
 
   let readTime = "5 min read";
+  let postDescription = "Read this insightful article from Marketing Tusk.";
   if (post.body) {
     const text = post.body
       .filter((block: any) => block._type === "block" && block.children)
@@ -112,13 +122,46 @@ export default async function BlogPostPage({
     const words = text.split(/\s+/).length;
     const minutes = Math.ceil(words / 200) || 1;
     readTime = `${minutes} min read`;
+    if (text) {
+      postDescription = text.substring(0, 160) + "...";
+    }
   }
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: postDescription,
+    image: post.mainImage ? [post.mainImage] : [`${siteUrl}/images/og-image.jpg`],
+    datePublished: post.publishedAt,
+    dateModified: post._updatedAt || post.publishedAt,
+    author: {
+      "@type": "Person",
+      name: post.author || "Marketing Tusk",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Marketing Tusk",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/images/logo.svg`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/blog/${slug}`,
+    },
+  };
 
   // Fallback to placeholder if no image so the hero doesn't look completely empty
   const heroImage = post.mainImage || "/placeholder.svg?height=1080&width=1920";
 
   return (
     <article className="min-h-screen bg-background pb-24 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       {/* Immersive Hero Section */}
       <section className="relative w-full h-[65vh] min-h-[500px] max-h-[800px] flex flex-col justify-end">
         {post.mainImage ? (
