@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -159,7 +159,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # A PAT, not GITHUB_TOKEN: PRs opened with GITHUB_TOKEN do not trigger
           # `pull_request` workflows, so the promotion PR would never receive
@@ -213,7 +213,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.PROMOTE_TOKEN }}
 
