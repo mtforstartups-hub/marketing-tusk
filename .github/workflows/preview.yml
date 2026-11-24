@@ -238,6 +238,9 @@ jobs:
           It will be recreated automatically by the next green \`preview\` run.
           EOF
 
-          gh pr comment "$pr" --body-file withdraw-comment.md
+          # Close first: this is the safety-critical action. The explanatory
+          # comment is best-effort so a missing `Issues` permission can never
+          # prevent the PR from being withdrawn.
           gh pr close "$pr"
+          gh pr comment "$pr" --body-file withdraw-comment.md || true
           echo "Closed promotion PR #$pr."
