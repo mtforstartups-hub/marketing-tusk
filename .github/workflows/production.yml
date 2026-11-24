@@ -1,0 +1,88 @@
+name: Production — Deploy & Smoke
+
+# Tier 3 — production deploy followed by a SHALLOW smoke test only.
+#
+# The Playwright suite is deliberately NOT run here: it writes rows to Google
+# Sheets and sends real email, so running it against production would pollute
+# real data. E2E belongs on the preview environment (see preview.yml).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  PRODUCTION_ORIGIN: https://www.marketingtusk.com
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.11"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: bun install --global vercel@latest
+
+      - name: Pull Vercel Production environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+  smoke:
+    name: Smoke test production
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Homepage responds 200
+        run: curl -fsS -o /dev/null -w 'homepage → HTTP %{http_code}\n' "$PRODUCTION_ORIGIN/"
+
+      - name: Contact page responds 200
+        run: curl -fsS -o /dev/null -w 'contact → HTTP %{http_code}\n' "$PRODUCTION_ORIGIN/contact"
+
+      - name: Sitemap is served
+        run: curl -fsS -o /dev/null -w 'sitemap → HTTP %{http_code}\n' "$PRODUCTION_ORIGIN/sitemap.xml"
+
+      # Catches the classic "promoted with preview env vars" mistake: the
+      # deployment is up, but it is serving the always-pass Turnstile test key.
+      - name: Turnstile uses a real sitekey
+        run: |
+          html=$(curl -fsS "$PRODUCTION_ORIGIN/contact")
+
+          if ! echo "$html" | grep -q 'data-sitekey='; then
+            echo "::error::No Turnstile widget found on /contact."
+            exit 1
+          fi
+
+          if echo "$html" | grep -q '1x00000000000000000000AA'; then
+            echo "::error::Production is serving the Turnstile TEST sitekey."
+            exit 1
+          fi
+
+          echo "Turnstile sitekey looks like a real key."

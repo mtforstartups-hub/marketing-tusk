@@ -41,8 +41,14 @@ async function getSheetRowByEmail(email: string): Promise<string[] | undefined> 
 
   const sheets = google.sheets({ version: "v4", auth });
 
+  // The deployment writes to SPREADSHEET_ID; the test reads from
+  // TEST_SPREADSHEET_ID. In the preview pipeline both point at the same
+  // staging sheet, so either name works.
+  const spreadsheetId =
+    process.env.TEST_SPREADSHEET_ID ?? process.env.SPREADSHEET_ID ?? "";
+
   const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: process.env.TEST_SPREADSHEET_ID ?? "",
+    spreadsheetId,
     range: "Sheet1!A:Z", // widened range just in case
   });
 

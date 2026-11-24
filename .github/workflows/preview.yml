@@ -1,0 +1,176 @@
+name: Preview — Deploy, E2E & Promote
+
+# Tier 2 — the gate. Runs when work lands on the long-lived `preview` branch.
+#
+#   1. build + deploy to Vercel using the Preview environment scope
+#   2. alias the deployment to a STABLE hostname
+#   3. shallow smoke check (is it alive?)
+#   4. full Playwright E2E against that stable hostname
+#   5. only if everything is green: open + auto-merge the PR `preview → main`
+#
+# Env vars are NOT duplicated in this file. They are pulled from Vercel's
+# Preview scope, so the tests run against exactly the configuration the
+# deployment itself received.
+
+on:
+  push:
+    branches: [preview]
+  workflow_dispatch:
+
+# Never cancel a run in flight: the promote job merges into main, and a
+# half-cancelled run could leave the promotion PR in a confusing state.
+concurrency:
+  group: preview-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  PREVIEW_ORIGIN: https://preview.marketingtusk.com
+
+jobs:
+  verify:
+    name: Deploy preview & run E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    outputs:
+      deployment_url: ${{ steps.deploy.outputs.deployment_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.11"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: bun install --global vercel@latest
+
+      # Writes .vercel/project.json and .vercel/.env.preview.local
+      - name: Pull Vercel Preview environment
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "Deployed to https://$URL"
+          echo "deployment_url=https://$URL" >> "$GITHUB_OUTPUT"
+
+      # A stable hostname means Turnstile, OAuth redirects and
+      # PLAYWRIGHT_BASE_URL never have to chase an ephemeral URL.
+      - name: Alias deployment to stable preview domain
+        run: |
+          vercel alias set "${{ steps.deploy.outputs.deployment_url }}" \
+            preview.marketingtusk.com \
+            --token=${{ secrets.VERCEL_TOKEN }}
+
+      # Shallow liveness check — fail in seconds, not after a 2-minute E2E run.
+      # Vercel Deployment Protection returns 401 until bypassed, which this
+      # check catches immediately.
+      - name: Smoke check
+        run: |
+          for attempt in $(seq 1 10); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' \
+              -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" \
+              "$PREVIEW_ORIGIN/contact")
+            echo "attempt $attempt → HTTP $code"
+            if [ "$code" = "200" ]; then
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::Preview deployment did not become healthy."
+          exit 1
+
+      # playwright.config.ts loads .env.test. Seeding it from the Vercel
+      # Preview scope means the suite and the deployment share one source of
+      # truth for credentials, sheet id and Turnstile keys.
+      - name: Prepare test environment from Vercel Preview scope
+        run: |
+          cp .vercel/.env.preview.local .env.test
+          {
+            echo ""
+            echo "PLAYWRIGHT_BASE_URL=$PREVIEW_ORIGIN"
+            echo "VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}"
+            echo "TEST_SPREADSHEET_ID=${{ secrets.TEST_SPREADSHEET_ID }}"
+          } >> .env.test
+
+      - name: Install Playwright browsers
+        run: bunx playwright install chromium --with-deps
+
+      - name: Run E2E tests
+        run: bunx playwright test
+        env:
+          CI: "true"
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-preview
+          path: playwright-report/
+          retention-days: 7
+
+  promote:
+    name: Promote preview → main
+    needs: verify
+    if: github.ref == 'refs/heads/preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # A PAT, not GITHUB_TOKEN: commits pushed by GITHUB_TOKEN do not
+          # trigger other workflows, so the production deploy would never run.
+          token: ${{ secrets.PROMOTE_TOKEN }}
+          fetch-depth: 0
+
+      - name: Open promotion PR if none exists
+        env:
+          GH_TOKEN: ${{ secrets.PROMOTE_TOKEN }}
+        run: |
+          existing=$(gh pr list --base main --head preview --state open \
+            --json number --jq '.[0].number')
+
+          if [ -z "$existing" ]; then
+            gh pr create \
+              --base main \
+              --head preview \
+              --title "Promote preview → main" \
+              --body "Automated promotion. Preview deploy, smoke check and E2E all passed."
+          else
+            echo "Promotion PR #$existing already open."
+          fi
+
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.PROMOTE_TOKEN }}
+        run: |
+          pr=$(gh pr list --base main --head preview --state open \
+            --json number --jq '.[0].number')
+
+          if [ -z "$pr" ]; then
+            echo "::error::No promotion PR found."
+            exit 1
+          fi
+
+          # --auto merges as soon as required checks on `main` pass.
+          # Fallback to an immediate merge if auto-merge is disabled repo-wide.
+          gh pr merge "$pr" --merge --auto \
+            || gh pr merge "$pr" --merge

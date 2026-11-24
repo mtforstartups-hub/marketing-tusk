@@ -2,14 +2,23 @@ import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
 import path from "path";
 
-// Always load .env.test — tests should never touch production credentials.
-// Create your local .env.test by copying .env.test.example and filling it in.
+// Load .env.test when present.
+// Locally: create it from .env.test.example.
+// In CI:   it is generated from Vercel's Preview environment scope.
 dotenv.config({
   path: path.resolve(process.cwd(), ".env.test"),
   override: true,
 });
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+
+// When PLAYWRIGHT_BASE_URL is set we are testing a deployed environment
+// (preview/production), so there is no local dev server to boot.
+const isRemoteTarget = Boolean(process.env.PLAYWRIGHT_BASE_URL);
+
+// Vercel Deployment Protection blocks unauthenticated requests to preview
+// deployments with a 401. The automation bypass secret lets Playwright through.
+const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -25,6 +34,12 @@ export default defineConfig({
     trace: "on-first-retry",
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
+    extraHTTPHeaders: bypassSecret
+      ? {
+          "x-vercel-protection-bypass": bypassSecret,
+          "x-vercel-set-bypass-cookie": "true",
+        }
+      : {},
   },
 
   projects: [
@@ -34,13 +49,15 @@ export default defineConfig({
     },
   ],
 
-  /* Start bun dev before running tests */
-  webServer: {
-    command: "bun run dev",
-    url: `${BASE_URL}/contact`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    stdout: "pipe",
-    stderr: "pipe",
-  },
+  /* Start bun dev only when running against localhost */
+  webServer: isRemoteTarget
+    ? undefined
+    : {
+        command: "bun run dev",
+        url: `${BASE_URL}/contact`,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+        stdout: "pipe",
+        stderr: "pipe",
+      },
 });
