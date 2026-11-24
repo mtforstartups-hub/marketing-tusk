@@ -21,8 +21,12 @@ jobs:
     timeout-minutes: 15
 
     # next.config.ts imports env.ts, which calls process.exit(1) when a required
-    # variable is missing. These are throwaway placeholders so the build can run
-    # without secrets. Never put real credentials here.
+    # variable is missing. Throwaway placeholders so the build can run without
+    # app secrets. Never put real credentials here.
+    #
+    # The two Sanity values are the exception: they are NEXT_PUBLIC_* (already
+    # shipped to every browser) and the build genuinely fetches content from
+    # Sanity. They come from repository variables, not secrets.
     env:
       ADMIN_EMAIL: ci@example.com
       EMAIL_USER: ci@example.com
@@ -36,13 +40,28 @@ jobs:
       TURNSTILE_SECRET: 1x0000000000000000000000000000000AA
       TURNSTILE_HOSTNAMES: localhost
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
-      NEXT_PUBLIC_SANITY_DATASET: production
-      NEXT_PUBLIC_SANITY_PROJECT_ID: dummy-project-id
+      NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
       NEXT_PUBLIC_SITE_URL: https://www.marketingtusk.com
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Fail with an actionable message instead of a cryptic Sanity 404.
+      - name: Verify Sanity build config
+        env:
+          PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+        run: |
+          missing=()
+          if [ -z "$PROJECT_ID" ]; then missing+=("NEXT_PUBLIC_SANITY_PROJECT_ID"); fi
+          if [ -z "$DATASET" ]; then missing+=("NEXT_PUBLIC_SANITY_DATASET"); fi
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing repository variables: ${missing[*]}"
+            echo "Add them under Settings > Secrets and variables > Actions > Variables."
+            exit 1
+          fi
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
