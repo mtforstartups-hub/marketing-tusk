@@ -160,7 +160,9 @@ export default async function BlogPostPage({
     <article className="min-h-screen bg-background pb-24 font-sans">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleJsonLd).replace(/</g, "\\u003c"),
+        }}
       />
       {/* Immersive Hero Section */}
       <section className="relative w-full h-[65vh] min-h-[500px] max-h-[800px] flex flex-col justify-end">

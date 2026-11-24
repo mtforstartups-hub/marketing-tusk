@@ -53,9 +53,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Marketing Tusk - Launch. Market. Grow.",
-    description:
-      "Your go-to ecosystem growth partner for startups, SMEs, enablers, and investors across India.",
     site: "@marketingtusk",
     creator: "@marketingtusk",
     images: ["/images/og-image.jpg"],
@@ -120,11 +117,15 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
+          }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
+          }}
         />
       </head>
       <GoogleTagManager gtmId="GTM-WKFMFWW8" />
