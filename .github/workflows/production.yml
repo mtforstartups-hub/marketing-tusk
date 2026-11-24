@@ -41,8 +41,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Pinned to a major on purpose: `@latest` changes behaviour silently.
       - name: Install Vercel CLI
-        run: bun install --global vercel@latest
+        run: bun install --global vercel@66
 
       - name: Pull Vercel Production environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}

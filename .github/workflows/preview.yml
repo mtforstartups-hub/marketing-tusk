@@ -18,6 +18,8 @@ name: Preview — Deploy, E2E & Promote
 on:
   push:
     branches: [preview]
+  # Lets a pipeline fix be retried without an empty commit. Runs the workflow
+  # as it exists on the selected ref.
   workflow_dispatch:
 
 # Never cancel a run in flight: the promote job merges into main, and a
@@ -56,8 +58,10 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Pinned to a major on purpose: `@latest` changed the shape of the URL
+      # printed by `vercel deploy`, which silently broke the alias step.
       - name: Install Vercel CLI
-        run: bun install --global vercel@latest
+        run: bun install --global vercel@66
 
       # Writes .vercel/project.json and .vercel/.env.preview.local
       - name: Pull Vercel Preview environment
@@ -69,9 +73,25 @@ jobs:
       - name: Deploy
         id: deploy
         run: |
-          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
-          echo "Deployed to https://$URL"
-          echo "deployment_url=https://$URL" >> "$GITHUB_OUTPUT"
+          # Vercel CLI has printed a bare hostname in some versions and a full
+          # https:// URL in others (66.x does the latter). Normalise instead of
+          # trusting either shape — prepending blindly produced
+          # "https://https://mt-….vercel.app", which `vercel alias set` then
+          # failed to parse.
+          raw=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} \
+            | tr -d '\r' \
+            | awk 'NF { last = $0 } END { print last }')
+          host=${raw#https://}
+          host=${host#http://}
+          host=${host%/}
+
+          if [ -z "$host" ]; then
+            echo "::error::vercel deploy returned no URL (got: '$raw')"
+            exit 1
+          fi
+
+          echo "Deployed to https://$host"
+          echo "deployment_url=https://$host" >> "$GITHUB_OUTPUT"
 
       # A stable hostname means Turnstile, OAuth redirects and
       # PLAYWRIGHT_BASE_URL never have to chase an ephemeral URL.
@@ -86,6 +106,7 @@ jobs:
       # check catches immediately.
       - name: Smoke check
         run: |
+          code=""
           for attempt in $(seq 1 10); do
             code=$(curl -s -o /dev/null -w '%{http_code}' \
               -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" \
@@ -96,43 +117,39 @@ jobs:
             fi
             sleep 6
           done
-          echo "::error::Preview deployment did not become healthy."
+          echo "::error::Preview deployment did not become healthy (last HTTP $code)."
+          echo "A 302 or 401 here means Deployment Protection rejected the bypass header — check VERCEL_AUTOMATION_BYPASS_SECRET."
           exit 1
+
+      # Real Turnstile keys reject datacenter IPs, so a preview serving the
+      # production sitekey fails every E2E submit for the wrong reason. Catch
+      # the misconfiguration here, with an actionable message, instead of
+      # leaving Playwright to time out waiting for a token.
+      - name: Preview serves the Turnstile test sitekey
+        run: |
+          html=$(curl -fsS \
+            -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" \
+            "$PREVIEW_ORIGIN/contact")
+
+          if ! echo "$html" | grep -q '1x00000000000000000000AA'; then
+            echo "::error::Preview is not serving the Turnstile TEST sitekey."
+            echo "Set NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA and"
+            echo "TURNSTILE_SECRET=1x0000000000000000000000000000000AA in the Vercel Preview scope."
+            exit 1
+          fi
+
+          echo "Turnstile test sitekey confirmed."
 
       # Seed the E2E environment with ONLY the keys the suite actually reads.
       # Everything else in .vercel/.env.preview.local (Gmail refresh token,
       # admin password, Postgres URL, Sanity token) stays out of the test
-      # process. Parsed with dotenv so multi-line values survive intact.
+      # process. The allowlist lives in scripts/seed-test-env.ts so it can be
+      # run and tested locally instead of only inside a workflow.
       - name: Seed test environment (allowlist)
-        run: |
-          bun -e '
-            const fs = require("fs");
-            const dotenv = require("dotenv");
-
-            const source = dotenv.parse(fs.readFileSync(".vercel/.env.preview.local"));
-            const allowed = [
-              "GOOGLE_SERVICE_ACCOUNT_EMAIL",
-              "GOOGLE_PRIVATE_KEY",
-              "SPREADSHEET_ID",
-            ];
-
-            const missing = allowed.filter((key) => source[key] === undefined);
-            if (missing.length > 0) {
-              console.error(`::error::Missing from Vercel Preview scope: ${missing.join(", ")}`);
-              process.exit(1);
-            }
-
-            const lines = allowed.map(
-              (key) => `${key}=${JSON.stringify(source[key])}`,
-            );
-
-            fs.writeFileSync(".env.test", lines.join("\n") + "\n");
-          '
-
-          cat >> .env.test <<EOF
-          PLAYWRIGHT_BASE_URL=$PREVIEW_ORIGIN
-          VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          EOF
+        run: bun run scripts/seed-test-env.ts
+        env:
+          PREVIEW_ORIGIN: ${{ env.PREVIEW_ORIGIN }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
       - name: Install Playwright browsers
         run: bunx playwright install chromium --with-deps
