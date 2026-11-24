@@ -21,7 +21,6 @@ on:
   # Lets a pipeline fix be retried without an empty commit. Runs the workflow
   # as it exists on the selected ref.
   workflow_dispatch:
-  workflow_dispatch:
 
 # Never cancel a run in flight: the promote job merges into main, and a
 # half-cancelled run could leave the promotion PR in a confusing state.
