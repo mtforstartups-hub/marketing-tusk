@@ -79,7 +79,9 @@ jobs:
           # trusting either shape — prepending blindly produced
           # "https://https://mt-….vercel.app", which `vercel alias set` then
           # failed to parse.
-          raw=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1 | tr -d '\r')
+          raw=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} \
+            | tr -d '\r' \
+            | awk 'NF { last = $0 } END { print last }')
           host=${raw#https://}
           host=${host#http://}
           host=${host%/}
