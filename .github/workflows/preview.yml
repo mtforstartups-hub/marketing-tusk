@@ -132,7 +132,6 @@ jobs:
           cat >> .env.test <<EOF
           PLAYWRIGHT_BASE_URL=$PREVIEW_ORIGIN
           VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          TEST_SPREADSHEET_ID=${{ secrets.TEST_SPREADSHEET_ID }}
           EOF
 
       - name: Install Playwright browsers
