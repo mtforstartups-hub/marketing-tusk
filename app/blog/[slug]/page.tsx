@@ -4,9 +4,8 @@ import Image from "next/image";
 import SanityImage from "@/components/SanityImage";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import NewsletterForm from "@/components/NewsletterForm";
 import { ArrowLeft, Calendar, User, Clock, Mail, Twitter, Linkedin, Github, Globe } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
 
@@ -372,15 +371,11 @@ export default async function BlogPostPage({
                   Join 5,000+ founders receiving our best strategies and market
                   analysis every week.
                 </p>
-                <div className="space-y-3">
-                  <Input
-                    placeholder="Work email address"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:ring-1 focus-visible:ring-white h-11"
-                  />
-                  <Button className="w-full bg-white text-primary-blue hover:bg-gray-50 h-11 font-semibold">
-                    Subscribe
-                  </Button>
-                </div>
+                <NewsletterForm
+                  variant="stacked"
+                  source={`blog-post:${slug}`}
+                  placeholder="Work email address"
+                />
               </div>
             </div>
 

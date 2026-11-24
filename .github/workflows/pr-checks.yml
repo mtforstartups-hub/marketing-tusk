@@ -29,7 +29,10 @@ jobs:
       CLIENT_ID: ci-client-id
       CLIENT_SECRET: ci-client-secret
       REFRESH_TOKEN: ci-refresh-token
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: ci@example.com
+      GOOGLE_PRIVATE_KEY: ci-private-key
       SPREADSHEET_ID: ci-spreadsheet-id
+      NEWSLETTER_SHEET_TAB: Newsletter
       TURNSTILE_SECRET: 1x0000000000000000000000000000000AA
       TURNSTILE_HOSTNAMES: localhost
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA

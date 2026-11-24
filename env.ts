@@ -12,7 +12,15 @@ const envSchema = z.object({
   CLIENT_ID: z.string({ error: "CLIENT_ID needed" }),
   CLIENT_SECRET: z.string({ error: "CLIENT_SECRET needed" }),
   REFRESH_TOKEN: z.string({ error: "REFRESH_TOKEN needed" }),
+  GOOGLE_SERVICE_ACCOUNT_EMAIL: z.email({
+    error:
+      "GOOGLE_SERVICE_ACCOUNT_EMAIL must be a valid service account email (e.g. sheet-saver@project.iam.gserviceaccount.com)",
+  }),
+  GOOGLE_PRIVATE_KEY: z
+    .string({ error: "GOOGLE_PRIVATE_KEY needed" })
+    .min(1, { error: "GOOGLE_PRIVATE_KEY is required" }),
   SPREADSHEET_ID: z.string({ error: "SPREADSHEET_ID needed" }),
+  NEWSLETTER_SHEET_TAB: z.string().min(1).default("Newsletter"),
   TURNSTILE_SECRET: z.string({ error: "TURNSTILE_SECRET needed" }),
   TURNSTILE_HOSTNAMES: z.string({ error: "TURNSTILE_HOSTNAMES needed" }),
 });

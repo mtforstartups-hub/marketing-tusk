@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import BlogPostSearch from "./BlogPostSearch";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import NewsletterForm from "@/components/NewsletterForm";
 import { Suspense } from "react";
 import BlogList, { POSTS_PER_PAGE } from "./BlogList";
 import BlogListSkeleton from "./BlogListSkeleton";
@@ -189,16 +189,7 @@ export default async function BlogPage(props: {
             Get the latest insights, tips, and startup stories delivered
             directly to your inbox.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              className="bg-white/95 text-gray-900 border-0 focus-visible:ring-2 focus-visible:ring-white"
-            />
-            <Button className="bg-white text-primary-blue hover:bg-gray-100 font-semibold shadow-lg hover:shadow-xl transition-all shrink-0">
-              Subscribe
-            </Button>
-          </div>
+          <NewsletterForm source="blog-index" />
           <p className="text-sm opacity-75 mt-5">
             Join 5,000+ entrepreneurs who read our weekly newsletter
           </p>

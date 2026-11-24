@@ -33,11 +33,15 @@ async function pickSelect(page: Page, fieldName: string, optionLabel: string) {
  * Read the Google Sheet and find the row matching a specific email.
  */
 async function getSheetRowByEmail(email: string): Promise<string[] | undefined> {
-  const auth = new google.auth.OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET
-  );
-  auth.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+  // Read with the same service account the app writes with, so the test needs
+  // exactly one credential set.
+  const auth = new google.auth.GoogleAuth({
+    credentials: {
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: (process.env.GOOGLE_PRIVATE_KEY ?? "").replace(/\\n/g, "\n"),
+    },
+    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
+  });
 
   const sheets = google.sheets({ version: "v4", auth });
 

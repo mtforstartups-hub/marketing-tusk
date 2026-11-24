@@ -131,3 +131,72 @@ export function generateAdminEmailHtml(data: TemplateData) {
   </html>
   `;
 }
+
+type NewsletterTemplateData = {
+  email: string;
+  source?: string;
+};
+
+export function generateNewsletterEmailHtml(data: NewsletterTemplateData) {
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Newsletter Subscriber</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f7f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #333333; line-height: 1.6;">
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f9; padding: 40px 20px;">
+      <tr>
+        <td align="center">
+          <table width="100%" max-width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; max-width: 600px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+
+            <tr>
+              <td style="padding: 30px 40px; text-align: center; border-bottom: 3px solid #217fff;">
+                <img src="https://www.marketingtusk.com/images/logo.svg" alt="Marketing Tusk" width="250" style="max-width: 100%; height: auto; display: block; margin: 0 auto;" />
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background-color: #217fff; padding: 15px 40px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.5px;">New Newsletter Subscriber</h1>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 40px;">
+                <p style="margin-top: 0; margin-bottom: 24px; font-size: 16px;">Hello Admin,</p>
+                <p style="margin-top: 0; margin-bottom: 32px; font-size: 16px;">Someone just subscribed to the Marketing Tusk newsletter.</p>
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 32px;">
+                  <tr>
+                    <td width="35%" style="padding: 8px 0; font-weight: 600; color: #555555; font-size: 15px;">Email:</td>
+                    <td width="65%" style="padding: 8px 0; font-size: 15px;"><a href="mailto:${data.email}" style="color: #217fff; text-decoration: none;">${data.email}</a></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #555555; font-size: 15px;">Signed up from:</td>
+                    <td style="padding: 8px 0; font-size: 15px;">${data.source || "N/A"}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background-color: #f9f9f9; padding: 24px; text-align: center; border-top: 1px solid #eeeeee;">
+                <p style="margin: 0; font-size: 13px; color: #888888;">
+                  This email was generated automatically from the Marketing Tusk website.
+                </p>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  </body>
+  </html>
+  `;
+}

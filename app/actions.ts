@@ -3,8 +3,8 @@
 import { generateAdminEmailHtml } from "@/lib/email-templates";
 import * as z from "zod";
 import { env } from "@/env";
-import nodemailer from "nodemailer";
-import { google } from "googleapis";
+import { appendRow } from "@/lib/google-sheets";
+import { sendAdminEmail } from "@/lib/mailer";
 
 // 1. Define the base fields that apply to EVERY role
 const baseFields = {
@@ -57,14 +57,6 @@ export type ContactFormState = {
 export async function appendToGoogleSheet(
   data: z.infer<typeof contactFormSchema>,
 ) {
-  const oauth2Client = new google.auth.OAuth2(env.CLIENT_ID, env.CLIENT_SECRET);
-
-  oauth2Client.setCredentials({
-    refresh_token: env.REFRESH_TOKEN,
-  });
-
-  const sheets = google.sheets({ version: "v4", auth: oauth2Client });
-
   // Map ALL possible form fields to specific array indexes (columns)
   const rowData = [
     new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), // Better readable timestamp
@@ -88,15 +80,7 @@ export async function appendToGoogleSheet(
     (data.role === "enabler" ? data.supportServices : "") || "",
   ];
 
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: env.SPREADSHEET_ID,
-    // Expanded range to cover A through P (16 columns)
-    range: "Sheet1!A:P",
-    valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [rowData],
-    },
-  });
+  await appendRow("Sheet1!A:P", rowData);
 }
 
 export default async function submitContactForm(
@@ -204,27 +188,12 @@ export default async function submitContactForm(
   try {
     const htmlContent = generateAdminEmailHtml(validatedFields.data);
 
-    const mailOptions = {
-      from: `"Marketing Tusk Website" <${env.EMAIL_USER}>`,
-      to: env.ADMIN_EMAIL,
-      replyTo: validatedFields.data.email,
+    // Run both tasks in parallel
+    const emailPromise = sendAdminEmail({
       subject: `New Contact Submission from ${validatedFields.data.name}`,
       html: htmlContent,
-    };
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: env.EMAIL_USER,
-        clientId: env.CLIENT_ID,
-        clientSecret: env.CLIENT_SECRET,
-        refreshToken: env.REFRESH_TOKEN,
-      },
+      replyTo: validatedFields.data.email,
     });
-
-    // Run both tasks in parallel
-    const emailPromise = transporter.sendMail(mailOptions);
     const sheetPromise = appendToGoogleSheet(validatedFields.data);
 
     // Wait for both to finish, regardless of success/failure
