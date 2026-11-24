@@ -1,4 +1,5 @@
 import type React from "react";
+import type { Metadata } from "next";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +7,41 @@ import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
 import whatsapp from "@/public/images/whatsapp.svg";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+  description:
+    "Get in touch with Marketing Tusk. Accelerate your startup growth, explore enabler partnerships, or connect with our investment advisory team.",
+  alternates: {
+    canonical: "/contact",
+  },
+  openGraph: {
+    title: "Contact Us | Marketing Tusk",
+    description:
+      "Get in touch with Marketing Tusk. Accelerate your startup growth, explore enabler partnerships, or connect with our investment advisory team.",
+    url: "https://www.marketingtusk.com/contact",
+    siteName: "Marketing Tusk",
+    locale: "en_IN",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Contact Marketing Tusk",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Us | Marketing Tusk",
+    description:
+      "Get in touch with Marketing Tusk. Accelerate your startup growth, explore enabler partnerships, or connect with our investment advisory team.",
+    site: "@marketingtusk",
+    creator: "@marketingtusk",
+    images: ["/images/og-image.jpg"],
+  },
+};
 
 export default function ContactPage() {
   return (

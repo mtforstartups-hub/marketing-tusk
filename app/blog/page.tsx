@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import BlogPostSearch from "./BlogPostSearch";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,41 @@ import { CATEGORIES_QUERY } from "@/sanity/lib/queries";
 import Link from "next/link";
 import AppPagination from "@/components/AppPagination";
 import { getPostsCount } from "@/sanity/lib/data";
+
+export const metadata: Metadata = {
+  title: "Blog & Ecosystem Insights",
+  description:
+    "Explore actionable insights, startup growth guides, and ecosystem analyses from Marketing Tusk.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "Blog & Ecosystem Insights | Marketing Tusk",
+    description:
+      "Explore actionable insights, startup growth guides, and ecosystem analyses from Marketing Tusk.",
+    url: "https://www.marketingtusk.com/blog",
+    siteName: "Marketing Tusk",
+    locale: "en_IN",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Marketing Tusk Blog & Insights",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog & Ecosystem Insights | Marketing Tusk",
+    description:
+      "Explore actionable insights, startup growth guides, and ecosystem analyses from Marketing Tusk.",
+    site: "@marketingtusk",
+    creator: "@marketingtusk",
+    images: ["/images/og-image.jpg"],
+  },
+};
 
 export const revalidate = 60;
 
