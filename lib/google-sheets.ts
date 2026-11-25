@@ -1,17 +1,10 @@
 import { google } from "googleapis";
 import { env } from "@/env";
+import { normalizePrivateKey } from "@/lib/private-key";
 
 type SheetsClient = ReturnType<typeof google.sheets>;
 
 let cachedClient: SheetsClient | null = null;
-
-/**
- * Vercel stores the service-account key with escaped newlines, so turn "\n"
- * back into real newlines. Also tolerate a key pasted with surrounding quotes.
- */
-function normalizePrivateKey(key: string): string {
-  return key.replace(/\\n/g, "\n").trim().replace(/^["']|["']$/g, "");
-}
 
 /**
  * Authenticates with a Google service account instead of a user OAuth2

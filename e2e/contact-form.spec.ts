@@ -1,5 +1,6 @@
 ﻿import { test, expect, Page } from "@playwright/test";
 import { google } from "googleapis";
+import { normalizePrivateKey } from "../lib/private-key";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -38,7 +39,9 @@ async function getSheetRowByEmail(email: string): Promise<string[] | undefined> 
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: (process.env.GOOGLE_PRIVATE_KEY ?? "").replace(/\\n/g, "\n"),
+      // Same normalisation the app uses, so a key that works for the
+      // deployment also works here.
+      private_key: normalizePrivateKey(process.env.GOOGLE_PRIVATE_KEY ?? ""),
     },
     scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
   });
